@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  super_admin
+  division_office_admin
+  division_office
+  school_admin
+  teacher
+}
+
+enum Affiliation {
+  super_admin
+  division_office
+  school
+}
+
+model User {
+  id            String      @id @default(cuid())
+  name          String?
+  email         String      @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  role          Role        @default(teacher)
+  affiliation   Affiliation @default(school)
+  createdAt     DateTime    @default(now())
+  updateAt      DateTime    @updatedAt
+  account       Account?
+}
+
+model Account {
+  id               String  @id @default(cuid())
+  first_name       String?
+  middle_name      String?
+  last_name        String?
+  suffix           String?
+  sex              String?
+  email            String?
+  position         String?
+  position_other   String?
+  classification   String?
+  years_in_service String?
+
+  section_or_unit      String?
+  undergraduate_course String?
+  date_graduated       String?
+  doctorate_degree     String?
+  master_degree        String?
+  locked               Boolean @default(false)
+
+  school          String?
+  division_office String?
+
+  account   User   @relation(fields: [accountId], references: [id])
+  accountId String @unique
+
+  certificates Certificates[]
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now())
+
+  @@unique([email])
+}
+
+model Certificates {
+  id                        String @id @default(cuid())
+  training_title            String
+  training_year             String
+  training_from             String
+  training_to               String
+  training_number_of_hours  String
+  training_sponsored_by     String
+  training_name_of_provider String
+  training_category         String
+  training_internation      String
+  training_certificate      String?
+
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String  @unique
+}

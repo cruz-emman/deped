@@ -1,0 +1,95 @@
+'use client'
+import React, { useCallback } from 'react'
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { RegisterSchema, RegisterSchemaType } from '@/lib/zod-schema'
+import { z } from 'zod'
+import { useForm } from "react-hook-form"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { toast } from '@/hooks/use-toast'
+import { RegisterAccountAction } from '../../actions/register'
+import { useRouter } from 'next/navigation'
+import { Label } from '@/components/ui/label'
+
+const RegisterForm = () => {
+
+  const router = useRouter()
+
+  const form = useForm<RegisterSchemaType>({
+    resolver: zodResolver(RegisterSchema),
+    defaultValues: {
+      email: "",
+      password: ''
+    },
+  })
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: RegisterAccountAction,
+    onSuccess: () => {
+      toast({
+        title: "Successfully register account"
+      })
+      router.push('/login')
+    },
+    onError: () => {
+      toast({
+        title: "Unable to register account"
+      })
+    }
+  })
+
+
+
+  const onSubmit = useCallback((values: RegisterSchemaType) => {
+    mutate(values)
+  }, [mutate])
+
+
+  return (
+    <>
+    <Label>Register</Label>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>email</FormLabel>
+                <FormControl>
+                  <Input type='email' placeholder="email" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>password</FormLabel>
+                <FormControl>
+                  <Input type='password' placeholder="password" {...field} />
+                </FormControl>
+
+              </FormItem>
+            )}
+          />
+          <Button 
+            disabled={isPending}
+          type="submit">Submit</Button>
+        </form>
+      </Form>
+    </>
+  )
+}
+
+export default RegisterForm
