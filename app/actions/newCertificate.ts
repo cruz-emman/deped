@@ -36,23 +36,26 @@ export async function NewCertificateAction(form: CertificateSchemaType) {
         training_name_of_provider,
         training_category,
         training_internation,
+        training_certificate
     } = parsedBody.data;
 
+    console.log(training_certificate)
+
     try {
-        await db.certificates.create({
-            data: {
-                training_title,
-                training_year,
-                training_from,
-                training_to,
-                training_number_of_hours,
-                training_sponsored_by,
-                training_name_of_provider,
-                training_category,
-                training_internation,
-                accountId: account.id,
-            },
-        });
+        // await db.certificates.create({
+        //     data: {
+        //         training_title,
+        //         training_year,
+        //         training_from,
+        //         training_to,
+        //         training_number_of_hours,
+        //         training_sponsored_by,
+        //         training_name_of_provider,
+        //         training_category,
+        //         training_internation,
+        //         accountId: account.id,
+        //     },
+        // });
 
         return { success: "Data successfully added" };
     } catch (error) {
