@@ -81,9 +81,11 @@ model Certificates {
   training_number_of_hours  String
   training_sponsored_by     String
   training_name_of_provider String
-  training_category         String
+  training_category         String?
   training_internation      String
   training_certificate      String?
+  training_certificate_url  String?
+  training_certificate_path String?
 
   account   Account @relation(fields: [accountId], references: [id])
   accountId String  @unique

@@ -4,7 +4,6 @@ import { db } from '@/lib/db'
 import { AccountSchema, AccountSchemaType } from '@/lib/zod-schema'
 
 export async function UpdateAccount(form: AccountSchemaType) {
-  console.log("Received form data:", form)
 
   const session = await auth()
 
@@ -66,7 +65,6 @@ export async function UpdateAccount(form: AccountSchemaType) {
       }
     })
 
-    console.log("Account created successfully:", newAccount)
     return { success: "Account updated successfully", newAccount }
 
   } catch (error) {

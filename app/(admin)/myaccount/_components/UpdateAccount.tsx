@@ -135,7 +135,6 @@ const UpdateAccountComponent = ({ user }: { user: string }) => {
                                         name="middle_name"
                                         defaultValue={data?.middle_name || ""}
                                         disabled={data?.locked}
-
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Middle Name*</FormLabel>

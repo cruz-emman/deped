@@ -71,11 +71,11 @@ function UserAdminAccount() {
       url: "/accounts",
       icon: Users2,
     },
-    {
-      title: "Result",
-      url: "/result",
-      icon: ChartBar,
-    },
+    // {
+    //   title: "Result",
+    //   url: "/result",
+    //   icon: ChartBar,
+    // },
   ]
   return (
     <Sidebar>
@@ -281,11 +281,11 @@ function DivisionOfficeAdminSideBar(){
       url: "/accounts",
       icon: Users2,
     },
-    {
-      title: "Result",
-      url: "/result",
-      icon: ChartBar,
-    },
+    // {
+    //   title: "Result",
+    //   url: "/result",
+    //   icon: ChartBar,
+    // },
   ]
   return (
     <Sidebar>
@@ -331,11 +331,11 @@ function SchoolOfficeAdminSideBar(){
       url: "/accounts",
       icon: Users2,
     },
-    {
-      title: "Result",
-      url: "/result",
-      icon: ChartBar,
-    },
+    // {
+    //   title: "Result",
+    //   url: "/result",
+    //   icon: ChartBar,
+    // },
   ]
   return (
     <Sidebar>

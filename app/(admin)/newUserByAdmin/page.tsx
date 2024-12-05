@@ -35,8 +35,8 @@ const NewUser = () => {
             name: '',
             email: '',
             password: '',
-            role: '',
-            affiliation: '',
+            role: undefined, 
+            affiliation: undefined,
         }
     })
 
@@ -184,21 +184,19 @@ const NewUser = () => {
                                                     </FormControl>
                                                     <SelectContent>
                                                         {form.watch('role') === 'division_office_admin' && (
-                                                            <SelectItem value="division_office_admin">Division Office Admin</SelectItem>
+                                                            <SelectItem value="division_office">Division Office Admin</SelectItem>
                                                         )}
                                                         {form.watch('role') === 'school_admin' && (
                                                             <SelectItem value="school">School</SelectItem>
                                                         )}
 
-                                                        {role === 'school_admin' && (
-                                                            <SelectItem value="school">School</SelectItem>
-                                                        )}
                                                         {role === 'division_office_admin' && (
                                                             <SelectItem value="division_office">Divison Office</SelectItem>
                                                         )}
+                                                        {role === 'school_admin' && (
+                                                            <SelectItem value="school">School</SelectItem>
+                                                        )}
 
-                                                        
-                                                        
                                                         
                                                     </SelectContent>
                                                 </Select>

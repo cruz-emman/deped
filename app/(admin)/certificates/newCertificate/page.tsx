@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form"
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -24,7 +24,8 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 
 const NewCertificate = () => {
-  
+  const [imageSrc, setImageSrc] = useState();
+  const [uploadData, setUploadData] = useState()
   const router = useRouter()
 
   const form = useForm<CertificateSchemaType>({
@@ -42,7 +43,6 @@ const NewCertificate = () => {
     }
   })
 
-  const fileRef = form.register("training_certificate");
 
 
   const { mutate, isPending } = useMutation({
@@ -68,6 +68,10 @@ const NewCertificate = () => {
       })
     }
   })
+
+  function handleOnChange(){
+    
+  }
 
   const onSubmit = useCallback((values: CertificateSchemaType) => {
     console.log(values)
@@ -208,7 +212,7 @@ const NewCertificate = () => {
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="training_category"
                 render={({ field }) => (
@@ -230,7 +234,7 @@ const NewCertificate = () => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <FormField
                 control={form.control}
                 name="training_internation"

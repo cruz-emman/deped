@@ -36,9 +36,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
+import Link from "next/link"
 
 
 export type DivisonOffice = {
+  id: string,
   account: {
     fullname: string;
     first_name: string;
@@ -62,9 +64,9 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     accessorKey: 'Name',
     header: 'Full Name',
     cell: ({ row }) => {
-      let fullName = row.original?.account.first_name + row.original?.account.middle_name.charAt(0) + row.original?.account.last_name
+      let fullName = row.original?.account.first_name + " " + row.original?.account.middle_name + " " + row.original?.account.last_name || ""
       return (
-        <div className="capitalize">{fullName}</div>
+        <div className="capitalize">{fullName || ""}</div>
       )
     }
   },
@@ -73,7 +75,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     header: 'Sex',
     cell: ({ row }) => {
       return (
-        <div className="capitalize">{row.original.account.sex}</div>
+        <div className="capitalize">{row.original.account.sex || ""}</div>
 
       )
     }
@@ -98,7 +100,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     header: 'Position',
     cell: ({ row }) => {
       return (
-        <div className="capitalize">{row.original.account.position}</div>
+        <div className="capitalize">{row.original.account.position || ""}</div>
 
       )
     }
@@ -108,7 +110,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     header: 'Classification',
     cell: ({ row }) => {
       return (
-        <div className="capitalize">{row.original.account.classification}</div>
+        <div className="capitalize">{row.original.account.classification || ""}</div>
 
       )
     }
@@ -118,7 +120,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     header: 'Years in Service',
     cell: ({ row }) => {
       return (
-        <div className="capitalize">{row.original.account.years_in_service}</div>
+        <div className="capitalize">{row.original.account.years_in_service || ""}</div>
 
       )
     }
@@ -128,7 +130,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     header: 'Undergraduate Course',
     cell: ({ row }) => {
       return (
-        <div className="capitalize">{row.original.account.undergraduate_course}</div>
+        <div className="capitalize">{row.original.account.undergraduate_course || ""}</div>
 
       )
     }
@@ -138,7 +140,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     header: 'Date Graduated',
     cell: ({ row }) => {
       return (
-        <div className="capitalize">{row.original.account.date_graduated}</div>
+        <div className="capitalize">{row.original.account.date_graduated || ""}</div>
 
       )
     }
@@ -148,7 +150,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     header: 'Doctorate',
     cell: ({ row }) => {
       return (
-        <div className="capitalize">{row.original.account.doctorate_degree}</div>
+        <div className="capitalize">{row.original.account.doctorate_degree || ""}</div>
 
       )
     }
@@ -158,7 +160,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     header: 'Master Degree',
     cell: ({ row }) => {
       return (
-        <div className="capitalize">{row.original.account.master_degree}</div>
+        <div className="capitalize">{row.original.account.master_degree || ""}</div>
 
       )
     }
@@ -167,7 +169,9 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+
+
+      const id = row.original.id
 
       return (
         <DropdownMenu>
@@ -180,12 +184,13 @@ export const columns: ColumnDef<DivisonOffice>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
+            asChild
             >
-              Copy payment ID
+              <Link href={`editUser/${id}`}>
+                Edit
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -207,9 +212,6 @@ export function DivisionTable() {
     queryKey: ['divisionOfficeData'],
     queryFn: () => fetch('/api/do_table').then((res) => res.json())
   })
-
-  console.log(divisionOfficeData.data)
-
 
 
   const table = useReactTable({

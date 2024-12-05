@@ -67,9 +67,16 @@ export const CreateRoleAccountSchema = z.object({
     //     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 
     //         {message: "Password must include uppercase, lowercase, number, and special character"}),
     email: z.string().email({ message: "Invalid email format" }),
-    role: z.string().min(2, { message: "Select role" }),
-    affiliation: z.string().min(2, { message: "Select Affiliation" })
-})
+    role: z.enum([
+        "super_admin",
+        "division_office_admin",
+        "division_office",
+        "school_admin",
+        "teacher",
+      ]),
+    affiliation: z.enum(['division_office', 'school'], {
+        errorMap: () => ({ message: "Select a valid Affiliation" })
+    }),})
 
 export type CreateRoleAccountSchemaType = z.infer<typeof CreateRoleAccountSchema>
 
@@ -86,7 +93,7 @@ export const CertificateSchema = z.object({
     training_name_of_provider: z.string().min(2, { message: "Name of provider must be at least 2 letters" }),
     training_category: z.string().min(2, { message: "Category must be at least 2 letters" }),
     training_internation: z.string().min(2, { message: "Select internataion" }),
-    training_certificate: typeof window === 'undefined' ? z.any().optional() : z.instanceof(FileList).optional()
+    training_certificate: z.instanceof(File).optional()
 })
 
 export type CertificateSchemaType = z.infer<typeof CertificateSchema>
