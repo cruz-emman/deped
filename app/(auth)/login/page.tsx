@@ -7,6 +7,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoginSchema, LoginSchemaType } from '@/lib/zod-schema'
@@ -16,6 +17,7 @@ import { useMutation } from '@tanstack/react-query'
 import { toast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { LoginAccountAction } from '../../actions/login'
+import Image from 'next/image'
 
 const LoginForm = () => {
 
@@ -60,10 +62,19 @@ const LoginForm = () => {
 
 
   return (
-    <>
+<div className='flex items-center justify-center flex-col gap-4 w-[300px] mx-auto'>
+<Image
+        src="/images/logo.png"
+        alt='logo'
+        width={100}
+        height={100}
+      />
       <p className='text-2xl text-muted-foreground'>Login</p>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} 
+          className="space-y-8 w-[300px] max-w-full"
+
+        >
           <FormField
             control={form.control}
             name="email"
@@ -73,6 +84,11 @@ const LoginForm = () => {
                 <FormControl>
                   <Input type='email' placeholder="email" {...field} />
                 </FormControl>
+                {form.formState.errors.email && (
+                <p className="text-sm text-red-500">
+                  {form.formState.errors.email.message}
+                </p>
+              )}
               </FormItem>
             )}
           />
@@ -85,7 +101,11 @@ const LoginForm = () => {
                 <FormControl>
                   <Input type='password' placeholder="password" {...field} />
                 </FormControl>
-
+                {form.formState.errors.password && (
+                <FormMessage>
+                   {form.formState.errors.password.message}
+                </FormMessage>
+              )}
               </FormItem>
             )}
           />
@@ -96,7 +116,7 @@ const LoginForm = () => {
             type="submit">Submit</Button>
         </form>
       </Form>
-    </>
+    </div>
   )
 }
 

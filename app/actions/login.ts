@@ -22,6 +22,10 @@ export async function LoginAccountAction(form: LoginSchemaType) {
             return { error: "Invalid Credentials", status: "error" }
         }
 
+        if(existingEmail.status !== 'active'){
+            return {error: "Your account is suspended, please contact the admin."}
+        }
+
         await signIn("credentials", {
             email,
             password,

@@ -18,6 +18,7 @@ import { toast } from '@/hooks/use-toast'
 import { RegisterAccountAction } from '../../actions/register'
 import { useRouter } from 'next/navigation'
 import { Label } from '@/components/ui/label'
+import Image from 'next/image'
 
 const RegisterForm = () => {
 
@@ -54,8 +55,14 @@ const RegisterForm = () => {
 
 
   return (
-    <>
-    <Label>Register</Label>
+    <div className='flex items-center justify-center flex-col gap-4'>
+      <Image
+        src="/images/logo.png"
+        alt="logo"
+        width={100}
+        height={100}
+      />
+      <p className='text-2xl text-muted-foreground'>Register</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -67,6 +74,11 @@ const RegisterForm = () => {
                 <FormControl>
                   <Input type='email' placeholder="email" {...field} />
                 </FormControl>
+                {form.formState.errors.email && (
+                <p className="text-sm text-red-500">
+                  {form.formState.errors.email.message}
+                </p>
+              )}
               </FormItem>
             )}
           />
@@ -79,16 +91,22 @@ const RegisterForm = () => {
                 <FormControl>
                   <Input type='password' placeholder="password" {...field} />
                 </FormControl>
-
+                {form.formState.errors.password && (
+                <p className="text-sm text-red-500">
+                  {form.formState.errors.password.message}
+                </p>
+              )}
               </FormItem>
             )}
           />
-          <Button 
+          <p className='text-sm text-muted-foreground'>Don't have an account? email at <span className='text-blue-400 underline'>admin@email.com</span></p>
+
+          <Button
             disabled={isPending}
-          type="submit">Submit</Button>
+            type="submit">Submit</Button>
         </form>
       </Form>
-    </>
+    </div>
   )
 }
 

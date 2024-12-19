@@ -9,12 +9,13 @@ export async function GET(request: Request) {
           role: 'division_office',
           NOT: {
             account: null
-          }
+          },
         }
       },
       include: {
         account: true,
       },
+    
     })
     
     return Response.json(data);

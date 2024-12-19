@@ -1,5 +1,5 @@
 'use client'
-import { CertificateSchema, CertificateSchemaType, CreateRoleAccountSchema } from '@/lib/zod-schema'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -9,85 +9,72 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-
-import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { school_hours, school_years_in_service } from '@/lib/school-choices'
-import { NewCertificateAction } from '@/app/actions/newCertificate'
+
+import { Input } from '@/components/ui/input'
+import { school_hours } from '@/lib/school-choices'
+import { getSingleCertificate, updateSingleCertificateMutation } from '@/hooks/react-query-hooks'
+import { useParams } from 'next/navigation'
+import SkeletonWrapper from '@/components/skeleton-wrapper'
+import { UpdateCertificateSchema, UpdateCertificateSchemaType } from '@/lib/zod-schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
 import { toast } from '@/hooks/use-toast'
-import { useMutation } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
 
-const NewCertificate = () => {
-  
-  const router = useRouter()
+const updateCertificate = () => {
+  const { id } = useParams<{ id: string }>();
+  const {data: singleCertificate, isLoading: singleCertificateIsLoading, error: singleCertificateError} = getSingleCertificate(id)
 
-  const form = useForm<CertificateSchemaType>({
-    resolver: zodResolver(CertificateSchema),
-    defaultValues: {
-      training_title: '',
-      training_year: '',
-      training_from: '',
-      training_to: '',
-      training_number_of_hours: '',
-      training_sponsored_by: '',
-      training_name_of_provider: '',
-      training_category: '',
-      training_internation: '',
-    }
+  const updateCertificate = updateSingleCertificateMutation(id)
+
+
+  const form = useForm<UpdateCertificateSchemaType>({
+    resolver: zodResolver(UpdateCertificateSchema),
   })
+  
+  useEffect(() => {
+    if(singleCertificate){
+      form.reset({
+        training_title: singleCertificate.training_title,
+        training_year: singleCertificate.training_year,
+        training_from: singleCertificate.training_from,
+        training_to: singleCertificate.training_to,
+        training_number_of_hours: singleCertificate.training_number_of_hours,
+        training_sponsored_by: singleCertificate.training_sponsored_by,
+        training_name_of_provider: singleCertificate.training_name_of_provider,
+        training_category: singleCertificate.training_category,
+        training_international: singleCertificate.training_international,
 
-  const fileRef = form.register("training_certificate");
-
-
-  const { mutate, isPending } = useMutation({
-    mutationKey: ['newCertificate'],
-    mutationFn: NewCertificateAction,
-    onSuccess: (data) => {
-      if (data?.success) {
-        toast({
-          title: data.success
-        })
-        window.location.reload()
-        router.push('/main')
-      }
-      else if (data?.error) {
-        toast({
-          title: data.error
-        })
-      }
-    },
-    onError: (error) => { 
-      toast({
-        title: "Unable to login account"
       })
     }
-  })
+  }, [singleCertificate, form.reset])
 
-  const onSubmit = useCallback((values: CertificateSchemaType) => {
-    console.log(values)
-    mutate(values)
-  },[mutate])
+
+  const onSubmit = useCallback((values: UpdateCertificateSchemaType) => {
+    updateCertificate.mutate(values)
+  }, [updateCertificate])
+  
 
 
   return (
-    <div className="container mx-auto py-10">
+    <div className='max-w-screen-2xl mx-auto w-full'>
       <Card>
         <CardHeader>
-          <CardTitle>Add new certificate</CardTitle>
-          <CardDescription>Create a new certificate for your L&D interventions / training programs</CardDescription>
+          <CardTitle>Update Certificate</CardTitle>
+          <CardDescription>Update your personal certificate</CardDescription>
         </CardHeader>
         <CardContent>
+          <SkeletonWrapper isLoading={singleCertificateIsLoading}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
               <FormField
                 control={form.control}
                 name="training_title"
+                defaultValue={singleCertificate?.training_title}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>TITLE OF L&D INTERVENTIONS / TRAINING PROGRAMS ATTENDED</FormLabel>
@@ -102,6 +89,7 @@ const NewCertificate = () => {
                 <FormField
                   control={form.control}
                   name="training_year"
+                  defaultValue={singleCertificate?.training_year}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>YEAR</FormLabel>
@@ -130,6 +118,8 @@ const NewCertificate = () => {
                     <FormField
                       control={form.control}
                       name="training_from"
+                      defaultValue={singleCertificate?.training_from}
+
                       render={({ field }) => (
                         <FormItem className="flex-1 px-4 py-2 border-r">
                           <FormLabel className="text-xs uppercase">From</FormLabel>
@@ -143,6 +133,8 @@ const NewCertificate = () => {
                     <FormField
                       control={form.control}
                       name="training_to"
+                      defaultValue={singleCertificate?.training_to}
+
                       render={({ field }) => (
                         <FormItem className="flex-1 px-4 py-2">
                           <FormLabel className="text-xs uppercase">To</FormLabel>
@@ -159,9 +151,11 @@ const NewCertificate = () => {
               <FormField
                 control={form.control}
                 name="training_number_of_hours"
+                defaultValue={singleCertificate?.training_number_of_hours}
+
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>No. of Years</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -185,6 +179,8 @@ const NewCertificate = () => {
               <FormField
                 control={form.control}
                 name="training_sponsored_by"
+                defaultValue={singleCertificate?.training_sponsored_by}
+
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>CONDUCTED / SPONSORED BY</FormLabel>
@@ -198,6 +194,8 @@ const NewCertificate = () => {
               <FormField
                 control={form.control}
                 name="training_name_of_provider"
+                defaultValue={singleCertificate?.training_name_of_provider}
+
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>NAME OF PROVIDER</FormLabel>
@@ -211,6 +209,8 @@ const NewCertificate = () => {
               <FormField
                 control={form.control}
                 name="training_category"
+                defaultValue={singleCertificate?.training_category}
+
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>CATEGORY</FormLabel>
@@ -221,10 +221,7 @@ const NewCertificate = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="technical">Technical</SelectItem>
-                        <SelectItem value="managerial">Managerial</SelectItem>
-                        <SelectItem value="supervisory">Supervisory</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="learning area">Learning Area</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -233,51 +230,41 @@ const NewCertificate = () => {
               />
               <FormField
                 control={form.control}
-                name="training_internation"
+                name="training_international"
+                defaultValue={singleCertificate?.training_international}
+
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>INTERNATIONAL</FormLabel>
+                    <FormLabel>INTERNATIONAL / LOCAL</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select yes or no" />
+                          <SelectValue placeholder="Select International or Local" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
+                        <SelectItem value="international">International</SelectItem>
+                        <SelectItem value="local">Local</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="training_certificate"
-                render={({ fie       x`xld }) => (
-                  <FormItem>
-                    <FormLabel>CERTIFICATE (File Upload)</FormLabel>
-                    <FormControl>
-                    <Input type="file" placeholder="shadcn" {...fileRef} />
-
-                    </FormControl>
-                    <FormDescription>Upload your certificate file (PDF, JPG, PNG)</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-              <Button 
-                disabled={isPending}
-              type="submit">
-                {isPending ? 'Submitting' : 'Submited'}
+           
+              <Button
+                // disabled={isPending}
+                type="submit">
+                {/* {isPending ? 'Submitting' : 'Submited'} */}
+                Submit
               </Button>
             </form>
           </Form>
+          </SkeletonWrapper>
         </CardContent>
       </Card>
     </div>
   )
 }
 
-export default NewCertificate
+export default updateCertificate

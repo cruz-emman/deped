@@ -3,11 +3,9 @@ import UpdateAccountComponent from "../_components/UpdateAccount";
 
 
 const MyAccount = async () => {
-  //const user = await auth()
-  const user = 'SCHOOL'
   return (
     <div>
-      <UpdateAccountComponent user={user} />
+      <UpdateAccountComponent />
     </div>
   )
 }
