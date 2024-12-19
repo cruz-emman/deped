@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import { useState } from 'react';
 import * as XLSX from 'xlsx';
 import {
   ColumnDef,
@@ -66,7 +66,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     accessorKey: 'Name',
     header: 'Full Name',
     cell: ({ row }) => {
-      let fullName = row.original?.account.first_name + " " + row.original?.account.middle_name + " " + row.original?.account.last_name || ""
+      const fullName = row.original?.account.first_name + " " + row.original?.account.middle_name + " " + row.original?.account.last_name || ""
       return (
         <div className="capitalize">{fullName || ""}</div>
       )
@@ -182,9 +182,9 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const id = row.original.id
-      const [suspendReason, setSuspendReason] = React.useState('suspend')
+      const [suspendReason, setSuspendReason] = useState('suspend')
       const suspendUser = suspendDivisionUser(id)
-      const [isOpen, setIsOpen] = React.useState(false);
+      const [isOpen, setIsOpen] = useState(false);
 
       const handleChange = (value: string) => {
         setSuspendReason(value)
@@ -266,13 +266,13 @@ export const columns: ColumnDef<DivisonOffice>[] = [
 ]
 
 export function DivisionTable() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
 
 
   const divisionOfficeData = getDivisionTable()
@@ -339,8 +339,8 @@ export function DivisionTable() {
           }
           className="max-w-sm"
         />
-         <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="ml-2"
           onClick={handleExportToExcel}
         >
