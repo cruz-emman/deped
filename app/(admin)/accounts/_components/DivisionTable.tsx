@@ -40,6 +40,24 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
+interface User {
+  id: string;
+  // Add other user properties as needed
+}
+
+// Define the row type
+interface Row {
+  original: User;
+}
+
+// Define props type for the component
+interface ActionCellProps {
+  row: Row;
+}
+
+// Define the status options type
+type StatusOption = 'active' | 'suspend' | 'retired' | 'transfered';
+
 export type DivisonOffice = {
   id: string,
   status: string,
@@ -61,13 +79,13 @@ export type DivisonOffice = {
   }
 }
 
-const ActionCell = ({ row }:{row:any}) => {
+export const ActionCell = ({ row }: ActionCellProps) => {
   const id = row.original.id;
   const [suspendReason, setSuspendReason] = useState('suspend');
   const suspendUser = suspendDivisionUser(id);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleChange = (value:string) => {
+  const handleChange = (value: string) => {
     setSuspendReason(value);
   };
 
