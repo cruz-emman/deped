@@ -17,14 +17,12 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -36,11 +34,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { getDivisionTable, suspendDivisionUser } from "@/hooks/react-query-hooks"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
