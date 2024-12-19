@@ -61,7 +61,7 @@ export type DivisonOffice = {
   }
 }
 
-const ActionCell = ({ row }:any) => {
+const ActionCell = ({ row }:{row:any}) => {
   const id = row.original.id;
   const [suspendReason, setSuspendReason] = useState('suspend');
   const suspendUser = suspendDivisionUser(id);
