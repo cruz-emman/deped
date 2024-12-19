@@ -61,13 +61,13 @@ export type DivisonOffice = {
   }
 }
 
-const ActionCell = ({ row }) => {
+const ActionCell = ({ row }:any) => {
   const id = row.original.id;
   const [suspendReason, setSuspendReason] = useState('suspend');
   const suspendUser = suspendDivisionUser(id);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleChange = (value) => {
+  const handleChange = (value:string) => {
     setSuspendReason(value);
   };
 
