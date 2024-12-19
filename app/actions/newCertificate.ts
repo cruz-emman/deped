@@ -22,9 +22,11 @@ export async function NewCertificateAction(form: CertificateSchemaType) {
         },
     });
 
+    
     if (!account) {
         return { error: "Account not found" };
     }
+    
 
     const {
         training_title,
@@ -35,7 +37,7 @@ export async function NewCertificateAction(form: CertificateSchemaType) {
         training_sponsored_by,
         training_name_of_provider,
         training_category,
-        training_internation,
+        training_international,
     } = parsedBody.data;
 
     try {
@@ -49,7 +51,7 @@ export async function NewCertificateAction(form: CertificateSchemaType) {
                 training_sponsored_by,
                 training_name_of_provider,
                 training_category,
-                training_internation,
+                training_international,
                 accountId: account.id,
             },
         });

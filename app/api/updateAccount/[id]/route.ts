@@ -63,8 +63,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
         return NextResponse.json(updateExistingUser)
     } catch (error) {
-        console.log(error)
-        // Make sure to return a NextResponse for error cases as well
-        return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 })
+        console.error("Full error details:", error)
+        return NextResponse.json({
+            error: "An unexpected error occurred",
+            details: error instanceof Error ? error.message : "Unknown error"
+        }, { status: 500 })
     }
 }

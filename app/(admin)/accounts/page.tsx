@@ -33,7 +33,8 @@ const Accounts = () => {
     onSuccess: () => {
       toast({
         title: 'Data imported successfully!'
-      });
+      }),
+      window.location.reload();
     },
     onError: (error) => {
       console.error(error);
@@ -66,6 +67,9 @@ const Accounts = () => {
           password: row.password || null,
           role: row.role || 'teacher',
           affiliation: row.affiliation || 'school',
+          first_name: row.first_name,
+          middle_name: row.middle_name,
+          last_name: row.last_name,
         }));
 
         // Call the server function
@@ -85,21 +89,26 @@ const Accounts = () => {
       </Button>
 
       {role === 'division_office_admin' && (
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="picture">Import Excel</Label>
-          <Input
-            id="picture"
-            type="file"
-            accept='.xlsx,.xls,.csv'
-            onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
-          />
-        </div>
+
+        <>
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label htmlFor="picture">Import Excel</Label>
+            <Input
+              id="picture"
+              type="file"
+              accept='.xlsx,.xls,.csv'
+              onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+            />
+          </div>
+          <Button onClick={handleFileUpload} disabled={isPending}>
+            {isPending ? 'Importing...' : 'Import Data'}
+          </Button>
+        </>
+
       )}
 
 
-      <Button onClick={handleFileUpload} disabled={isPending}>
-        {isPending ? 'Importing...' : 'Import Data'}
-      </Button>
+
       {/* <Button onClick={previewData}>
           Preview data
         </Button> */}

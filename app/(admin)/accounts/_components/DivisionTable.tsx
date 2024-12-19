@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import * as XLSX from 'xlsx';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -37,10 +38,15 @@ import {
 } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
+import { getDivisionTable, suspendDivisionUser } from "@/hooks/react-query-hooks"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
 export type DivisonOffice = {
   id: string,
+  status: string,
   account: {
     fullname: string;
     first_name: string;
@@ -166,33 +172,98 @@ export const columns: ColumnDef<DivisonOffice>[] = [
     }
   },
   {
+    accessorKey: 'Status',
+    header: 'Status',
+    cell: ({ row }) => {
+      return (
+        <div className="capitalize">{row.original.status}</div>
+
+      )
+    }
+  },
+  {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-
-
       const id = row.original.id
+      const [suspendReason, setSuspendReason] = React.useState('suspend')
+      const suspendUser = suspendDivisionUser(id)
+      const [isOpen, setIsOpen] = React.useState(false);
+
+      const handleChange = (value: string) => {
+        setSuspendReason(value)
+      }
+
+
+
+      const onSubmit = () => {
+        suspendUser.mutate(suspendReason)
+        setIsOpen(false)
+      }
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-            asChild
-            >
-              <Link href={`editUser/${id}`}>
-                Edit
-              </Link>
-            </DropdownMenuItem>
+        <>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  asChild
+                >
+                  <Link href={`editUser/${id}`}>
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setIsOpen(true)} >
+                  <DialogTrigger>
+                    Status
+                  </DialogTrigger>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Change Status</DialogTitle>
+                <DialogDescription>
+                  Make changes to your user's here. Click save when you're done.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <Select onValueChange={handleChange} defaultValue={suspendReason}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a reason" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Reasons</SelectLabel>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="suspend">Suspend</SelectItem>
+                      <SelectItem value="retired">Retired</SelectItem>
+                      <SelectItem value="transfered">Transfer to other municipality</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <DialogFooter>
+                <Button
+                  onClick={onSubmit}
+                  type="submit"
+                  disabled={suspendUser.isPending}
+                >
+                  {suspendUser.isPending ? 'Saving...' : 'Save changes'}
+                </Button>              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+        </>
       )
     },
   },
@@ -208,11 +279,7 @@ export function DivisionTable() {
   const [rowSelection, setRowSelection] = React.useState({})
 
 
-  const divisionOfficeData = useQuery({
-    queryKey: ['divisionOfficeData'],
-    queryFn: () => fetch('/api/do_table').then((res) => res.json())
-  })
-
+  const divisionOfficeData = getDivisionTable()
 
   const table = useReactTable({
     data: divisionOfficeData.data || [],
@@ -233,6 +300,34 @@ export function DivisionTable() {
     },
   })
 
+  const handleExportToExcel = () => {
+    // Prepare data for export
+    const exportData = divisionOfficeData.data?.map((item: any) => ({
+      'id': item.account.id,
+      'Full Name': `${item.account.first_name} ${item.account.middle_name} ${item.account.last_name}`,
+      'Sex': item.account.sex,
+      'Email': item.account.email,
+      'Position': item.account.position,
+      'Classification': item.account.classification,
+      'Years in Service': item.account.years_in_service,
+      'Undergraduate Course': item.account.undergraduate_course,
+      'Date Graduated': item.account.date_graduated,
+      'Doctorate Degree': item.account.doctorate_degree,
+      'Master Degree': item.account.master_degree,
+      'Status': item.status
+    }));
+
+    // Create workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(exportData || []);
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Division Office Users');
+
+    // Export to Excel file
+    XLSX.writeFile(workbook, `division_office_users_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
   if (divisionOfficeData.isPending) return 'Loading...'
 
   if (divisionOfficeData.error) return 'An error has occurred: ' + divisionOfficeData.error.message
@@ -248,10 +343,17 @@ export function DivisionTable() {
           }
           className="max-w-sm"
         />
+         <Button 
+          variant="outline" 
+          className="ml-2"
+          onClick={handleExportToExcel}
+        >
+          Export to Excel
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+              Filter <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

@@ -24,6 +24,13 @@ enum Affiliation {
   school
 }
 
+enum Status {
+  active
+  suspend
+  retired
+  transfered
+}
+
 model User {
   id            String      @id @default(cuid())
   name          String?
@@ -33,6 +40,7 @@ model User {
   image         String?
   role          Role        @default(teacher)
   affiliation   Affiliation @default(school)
+  status        Status      @default(active)
   createdAt     DateTime    @default(now())
   updateAt      DateTime    @updatedAt
   account       Account?
@@ -73,7 +81,7 @@ model Account {
 }
 
 model Certificates {
-  id                        String @id @default(cuid())
+  id                        String  @id @default(cuid())
   training_title            String
   training_year             String
   training_from             String
@@ -82,11 +90,8 @@ model Certificates {
   training_sponsored_by     String
   training_name_of_provider String
   training_category         String?
-  training_internation      String
-  training_certificate      String?
-  training_certificate_url  String?
-  training_certificate_path String?
+  training_international    String
 
   account   Account @relation(fields: [accountId], references: [id])
-  accountId String  @unique
+  accountId String
 }

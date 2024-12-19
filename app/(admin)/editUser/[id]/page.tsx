@@ -4,7 +4,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { useCurrentRole } from '@/hooks/user-role'
-import { CreateRoleAccountSchema, CreateRoleAccountSchemaType } from '@/lib/zod-schema'
+import { CreateRoleAccountSchema, CreateRoleAccountSchemaType, UpdateRoleAccountSchema, UpdateRoleAccountSchemaType } from '@/lib/zod-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SelectValue } from '@radix-ui/react-select'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -17,6 +17,8 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { toast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
+import AccountDetails from './_components/AccountDetails'
+import { getCurrentCredentials, updateCurrentCredential } from '@/hooks/react-query-hooks'
 
 const EditUser = () => {
 
@@ -28,57 +30,17 @@ const EditUser = () => {
   const [forcePassword, setForcePassword] = useState(true)
 
 
-  const credentialForm = useForm<CreateRoleAccountSchemaType>({
-    resolver: zodResolver(CreateRoleAccountSchema)
+  const credentialForm = useForm<any>({
   })
 
 
   //Fetch the credentials data, user itself
-  const getUserCredentials = useQuery({
-    queryKey: ['userCredentials', id],
-    queryFn: async () => {
-      const response = await axios.get(`/api/user-credentials/getUserCredentials/${id}`)
-      if (!response.data) {
-        throw new Error('No user credentials found')
-      }
-      return response.data
-    }
-  })
+  const getUserCredentials = getCurrentCredentials(id)
+  const updateCredential = updateCurrentCredential(id)
 
+  const affiliationUser = credentialForm.watch('affiliation')
 
-
-  const updateCredential = useMutation({
-    mutationKey: ['updateCredentials', id],
-    mutationFn: async (values: CreateRoleAccountSchemaType) => {
-      const res = await fetch(`/api/user-credentials/updateUserCredentials/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values)
-      })
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Server response error:", errorText);
-        throw new Error("Failed to update account");
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: "Failed to update credentials"
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['userCredentials', id]
-      });
-      toast({
-        title: "User credential has been updated!"
-      })
-    }
-  })
-
-
-  const handleSubmitCredential = useCallback((value: CreateRoleAccountSchemaType) => {
+  const handleSubmitCredential = useCallback((value: any) => {
     updateCredential.mutate(value); // This will trigger the mutation to update credentials
   }, [updateCredential]
   )
@@ -88,7 +50,7 @@ const EditUser = () => {
   useEffect(() => {
     if (getUserCredentials.data) {
       credentialForm.reset({
-        name: getUserCredentials.data.name,
+        name: getUserCredentials.data.name || "",
         email: getUserCredentials.data.email,
         role: getUserCredentials.data.role,
         affiliation: getUserCredentials.data.affiliation
@@ -98,19 +60,12 @@ const EditUser = () => {
 
   //END OF CREDENTIAL VALUES
 
-  const accountForm = useForm({
-    defaultValues: {
-
-    }
-  })
-
-
 
 
 
   return (
     <div className='max-w-screen-2xl w-full mx-auto relative'>
-      <div className='grid grid-cols-1 gap-4'>
+      <div className='grid grid-cols-1 gap-4 pb'>
         <Card>
           <CardHeader>
             <CardTitle>Credentials/Login Details</CardTitle>
@@ -127,7 +82,7 @@ const EditUser = () => {
                       <div className=''>
                         <FormField
                           control={credentialForm.control}
-                          defaultValue={getUserCredentials.data?.name}
+                          defaultValue={getUserCredentials.data?.name || ""}
                           name="name"
                           render={({ field }) => (
                             <FormItem>
@@ -142,12 +97,11 @@ const EditUser = () => {
                         <FormField
                           control={credentialForm.control}
                           name="password"
-                          defaultValue={getUserCredentials.data?.password}
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Password*</FormLabel>
                               <FormControl>
-                                <Input disabled={forcePassword} type='text' placeholder="password" {...field} />
+                                <Input disabled={forcePassword} type='password' placeholder="password" {...field} />
                               </FormControl>
                             </FormItem>
                           )}
@@ -202,10 +156,12 @@ const EditUser = () => {
 
                                     </>
                                   )}
+                                  {role === 'school_admin' && (
+                                    <>
+                                      <SelectItem value="teacher">Teacher</SelectItem>
 
-                                  {/* {role === 'school_admin' && (
-
-                                  )} */}
+                                    </>
+                                  )}
 
 
                                 </SelectContent>
@@ -245,7 +201,6 @@ const EditUser = () => {
                                     <SelectItem value="school">School</SelectItem>
                                   )}
 
-
                                 </SelectContent>
                               </Select>
                             </FormItem>
@@ -265,23 +220,8 @@ const EditUser = () => {
           </CardContent>
         </Card>
 
-
         {/* Personalize data */}
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Account/Personal Details</CardTitle>
-            <CardDescription>This part is where you edit the personal details such as first name, middle name, last name, position, classification, section/unit, etc...</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...credentialForm}>
-              <form className="space-y-8">
-                Personal Details
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-
+        <AccountDetails affiliationOfUser={affiliationUser} />
       </div>
     </div>
   )

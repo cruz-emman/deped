@@ -8,7 +8,6 @@ const Main = () => {
   const user = useCurrentUser()
 
   return (
-
     <>
       <Card className='relative z-10'>
         <CardHeader>
@@ -28,7 +27,6 @@ const Main = () => {
           />
         </div>
 
-        {/* Card Overlay */}
 
       </div>
     </>

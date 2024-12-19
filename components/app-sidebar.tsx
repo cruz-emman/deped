@@ -1,6 +1,6 @@
 "use client"
 
-import { Calendar, Home, Inbox, Search, Settings, ChartBar, Users2, FileUser } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings, ChartBar, Users2, FileUser, User, Lock } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -42,16 +42,16 @@ export function AppSidebar() {
     return <UserAdminAccount />
   }
 
-  if(role === 'division_office_admin'){
+  if (role === 'division_office_admin') {
     return <DivisionOfficeAdminSideBar />
   }
 
-  if(role === 'school_admin'){
+  if (role === 'school_admin') {
     return <SchoolOfficeAdminSideBar />
   }
 
   if (role === 'division_office') {
-    return <UserDivisionOfficeAccount id={sessionId}  />
+    return <UserDivisionOfficeAccount id={sessionId} />
   }
 
   // Otherwise, show regular user account based on data
@@ -117,6 +117,7 @@ function UserDivisionOfficeAccount({ id }: { id: string | undefined }) {
       url: "/main",
       icon: Home,
     },
+
     {
       title: "My Account",
       url: `/myaccount/${id}`,
@@ -124,9 +125,14 @@ function UserDivisionOfficeAccount({ id }: { id: string | undefined }) {
     },
     {
       title: "Certificates",
-      url: `/certificates`,
+      url: `/certificates/${id}`,
       icon: FileUser
-    }
+    },
+    {
+      title: "Change Password",
+      url: `/mycredentials/${id}`,
+      icon: Lock,
+    },
   ]
   return (
     <Sidebar>
@@ -172,6 +178,11 @@ function UserWithAccount({ id }: { id: string | undefined }) {
       title: "Home",
       url: "/main",
       icon: Home,
+    },
+    {
+      title: "Change Password",
+      url: `/mycredentials/${id}`,
+      icon: User,
     },
     {
       title: "My Account",
@@ -269,7 +280,7 @@ function UserWithoutAccount() {
 }
 
 
-function DivisionOfficeAdminSideBar(){
+function DivisionOfficeAdminSideBar() {
   const items = [
     {
       title: "Home",
@@ -319,7 +330,7 @@ function DivisionOfficeAdminSideBar(){
 }
 
 
-function SchoolOfficeAdminSideBar(){
+function SchoolOfficeAdminSideBar() {
   const items = [
     {
       title: "Home",

@@ -37,6 +37,9 @@ const NewUser = () => {
             password: '',
             role: undefined, 
             affiliation: undefined,
+            first_name: '',
+            middle_name: '',
+            last_name: ''
         }
     })
 
@@ -72,7 +75,6 @@ const NewUser = () => {
 
     const onSubmit = useCallback((values: CreateRoleAccountSchemaType) => {
         mutate(values)
-
     }, [mutate])
     return (
         <Card className='mt-2'>
@@ -92,7 +94,7 @@ const NewUser = () => {
                             <div className='w-full gap-4 grid grid-cols-1 md:grid-cols-2'>
                                 {/* Name(username), Email, Password, Role */}
                                 <div className=''>
-                                    <FormField
+                                <FormField
                                         control={form.control}
                                         name="name"
                                         render={({ field }) => (
@@ -100,6 +102,45 @@ const NewUser = () => {
                                                 <FormLabel>Username*</FormLabel>
                                                 <FormControl>
                                                     <Input type="text" placeholder="Username" {...field} />
+                                                </FormControl>
+
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="first_name"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>First Name*</FormLabel>
+                                                <FormControl>
+                                                    <Input type="text" placeholder="First Name" {...field} />
+                                                </FormControl>
+
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="middle_name"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Middle Name*</FormLabel>
+                                                <FormControl>
+                                                    <Input type="text" placeholder="Middle Name" {...field} />
+                                                </FormControl>
+
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="last_name"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Last Name*</FormLabel>
+                                                <FormControl>
+                                                    <Input type="text" placeholder="Last Name" {...field} />
                                                 </FormControl>
 
                                             </FormItem>

@@ -1,13 +1,14 @@
-import { z } from "zod"
+import { optional, z } from "zod"
 
 
 export const RegisterSchema = z.object({
     email: z.string().email().min(2, {
         message: "email must be at least 2 characters.",
     }),
-    password: z.string().min(2, {
-        message: " Password must be at least 2 characters"
-    })
+    password: z.string()
+        .min(8, { message: "Password must be at least 8 characters" }) // Recommended minimum password length
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            { message: "Password must include uppercase, lowercase, number, and special character" }),
 })
 
 
@@ -20,9 +21,10 @@ export const LoginSchema = z.object({
     email: z.string().email().min(2, {
         message: "email must be at least 2 characters.",
     }),
-    password: z.string().min(2, {
-        message: " Password must be at least 2 characters"
-    })
+    password: z.string()
+        .min(8, { message: "Password must be at least 8 characters" }) // Recommended minimum password length
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            { message: "Password must include uppercase, lowercase, number, and special character" }),
 })
 
 
@@ -33,22 +35,25 @@ export type LoginSchemaType = z.infer<typeof LoginSchema>
 
 
 export const AccountSchema = z.object({
-    first_name: z.string().min(1, 'First name is required'),
-    middle_name: z.string().min(1, 'Middle name is required'),
-    last_name: z.string().min(1, 'Last name is required'),
+    first_name: z.string().min(1, 'First name is required').optional(),
+    middle_name: z.string().min(1, 'Middle name is required').optional(),
+    last_name: z.string().min(1, 'Last name is required').optional(),
     sex: z.string().min(2, { message: "Select input field" }),
     suffix: z.string().optional(),
-
     position: z.string().min(1, 'Position is required'),
     position_other: z.string().optional(),
     classification: z.string().min(1, 'Classification is required'),
+    years_in_service: z.string().min(1, { message: "Select Years" }),
+
+    //Division
     section_or_unit: z.string().optional(),
     division_office: z.string().optional(),
-    years_in_service: z.string().min(1, { message: "Select Years" }),
     undergraduate_course: z.string().optional(),
     date_graduated: z.string().optional(),
     doctorate_degree: z.string().optional(),
     master_degree: z.string().optional(),
+
+    //School
     school: z.string().optional(),
 })
 
@@ -56,16 +61,12 @@ export type AccountSchemaType = z.infer<typeof AccountSchema>
 
 
 
-
 export const CreateRoleAccountSchema = z.object({
-    name: z.string().min(6, { message: "Username must be at least 6 letters" }), // Fixed typo and increased min length
-    password: z.string().min(2, {
-        message: " Password must be at least 2 characters"
-    }),
-    // password: z.string()
-    //     .min(8, {message: "Password must be at least 8 characters"}) // Recommended minimum password length
-    //     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 
-    //         {message: "Password must include uppercase, lowercase, number, and special character"}),
+    name: z.string().optional(),
+    password: z.string()
+        .min(8, { message: "Password must be at least 8 charact       ers" }) // Recommended minimum password length
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            { message: "Password must include uppercase, lowercase, number, and special character" }),
     email: z.string().email({ message: "Invalid email format" }),
     role: z.enum([
         "super_admin",
@@ -73,10 +74,14 @@ export const CreateRoleAccountSchema = z.object({
         "division_office",
         "school_admin",
         "teacher",
-      ]),
+    ]),
     affiliation: z.enum(['division_office', 'school'], {
         errorMap: () => ({ message: "Select a valid Affiliation" })
-    }),})
+    }),
+    first_name: z.string().optional(),
+    middle_name: z.string().optional(),
+    last_name: z.string().optional(),
+})
 
 export type CreateRoleAccountSchemaType = z.infer<typeof CreateRoleAccountSchema>
 
@@ -88,12 +93,94 @@ export const CertificateSchema = z.object({
     training_year: z.string().min(2, { message: "Training year must be selected" }),
     training_from: z.string().min(2, { message: "Select Date" }),
     training_to: z.string().min(2, { message: "Select Date" }),
-    training_number_of_hours: z.string().min(2, {message: "Number of years"}),
+    training_number_of_hours: z.string().min(2, { message: "Number of years" }),
     training_sponsored_by: z.string().min(2, { message: "Sponsored by must be at least 2 letters" }),
     training_name_of_provider: z.string().min(2, { message: "Name of provider must be at least 2 letters" }),
     training_category: z.string().min(2, { message: "Category must be at least 2 letters" }),
-    training_internation: z.string().min(2, { message: "Select internataion" }),
-    training_certificate: z.instanceof(File).optional()
+    training_international: z.string().min(2, { message: "Select internataion" }),
 })
 
 export type CertificateSchemaType = z.infer<typeof CertificateSchema>
+
+
+
+
+//UPDATE ZOD
+
+
+
+export const UpdateAccountSchema = z.object({
+    first_name: z.string().min(1, 'First name is required').optional(),
+    middle_name: z.string().min(1, 'Middle name is required').optional(),
+    last_name: z.string().min(1, 'Last name is required').optional(),
+    sex: z.string().min(2, { message: "Select input field" }).optional(),
+    suffix: z.string().optional(),
+    position: z.string().min(1, 'Position is required').optional(),
+    position_other: z.string().optional(),
+    classification: z.string().min(1, 'Classification is required').optional(),
+    years_in_service: z.string().min(1, { message: "Select Years" }).optional(),
+
+    //Division
+    section_or_unit: z.string().optional(),
+    division_office: z.string().optional(),
+    undergraduate_course: z.string().optional(),
+    date_graduated: z.string().optional(),
+    doctorate_degree: z.string().optional(),
+    master_degree: z.string().optional(),
+
+    //School
+    school: z.string().optional(),
+})
+
+export type UpdateAccountSchemaType = z.infer<typeof UpdateAccountSchema>
+
+
+
+export const UpdateRoleAccountSchema = z.object({
+    name: z.string().min(2, { message: "Username must be at least 2 letters" }).optional(),
+    password: z.string()
+        .min(8, { message: "Password must be at least 8 charact       ers" }) // Recommended minimum password length
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            { message: "Password must include uppercase, lowercase, number, and special character" }),
+    email: z.string().email({ message: "Invalid email format" }).optional(),
+    role: z.enum([
+        "super_admin",
+        "division_office_admin",
+        "division_office",
+        "school_admin",
+        "teacher",
+    ]).optional(),
+    affiliation: z.enum(['division_office', 'school'], {
+        errorMap: () => ({ message: "Select a valid Affiliation" })
+    }).optional(),
+})
+
+export type UpdateRoleAccountSchemaType = z.infer<typeof UpdateRoleAccountSchema>
+
+
+export const UpdateUserCredentialSchema = z.object({
+    email: z.string().email({ message: "Invalid email format" }).optional(),
+    password: z.string()
+        .min(8, { message: "Password must be at least 8 characters" }) // Recommended minimum password length
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            { message: "Password must include uppercase, lowercase, number, and special character" }).optional(),
+})
+
+export type UpdateUserCredentialSchemaType = z.infer<typeof UpdateUserCredentialSchema>
+
+
+
+
+export const UpdateCertificateSchema = z.object({
+    training_title: z.string().optional(),
+    training_year: z.string().optional(),
+    training_from: z.string().optional(),
+    training_to: z.string().optional(),
+    training_number_of_hours: z.string().optional(),
+    training_sponsored_by: z.string().optional(),
+    training_name_of_provider: z.string().optional(),
+    training_category: z.string().optional(),
+    training_international: z.string().optional(),
+})
+
+export type UpdateCertificateSchemaType = z.infer<typeof UpdateCertificateSchema>

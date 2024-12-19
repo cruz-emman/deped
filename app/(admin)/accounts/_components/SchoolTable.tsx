@@ -36,9 +36,12 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useQuery } from "@tanstack/react-query"
+import { getSchoolTable } from "@/hooks/react-query-hooks"
+import Link from "next/link"
 
 
 export type Office = {
+  id: string;
   account: {
     fullname: string;
     first_name: string;
@@ -59,7 +62,7 @@ export const columns: ColumnDef<Office>[] = [
     accessorKey: 'fullname',
     header: 'Full Name',
     cell: ({ row }) => {
-      let fullName = row.original.account.first_name + row.original.account.middle_name.charAt(0) + row.original.account.last_name
+      let fullName = row.original?.account.first_name + " " + row.original?.account.middle_name + " " + row.original?.account.last_name || ""
       return (
         <div className="capitalize">{fullName}</div>
       )
@@ -136,7 +139,9 @@ export const columns: ColumnDef<Office>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+
+
+      const id = row.original.id
 
       return (
         <DropdownMenu>
@@ -149,12 +154,13 @@ export const columns: ColumnDef<Office>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
+            asChild
             >
-              Copy payment ID
+              <Link href={`editUser/${id}`}>
+                Edit
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -172,11 +178,8 @@ export function SchoolTable() {
   const [rowSelection, setRowSelection] = React.useState({})
 
 
-  const schoolData = useQuery({
-    queryKey: ['schoolData'],
-    queryFn: () => fetch('/api/school_table').then((res) => res.json())
-  })
 
+  const schoolData = getSchoolTable()
 
   const table = useReactTable({
     data: schoolData.data || [],
@@ -215,7 +218,7 @@ export function SchoolTable() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+              Filter   <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

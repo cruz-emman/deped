@@ -23,6 +23,10 @@ export async function creatUser(data: CreateRoleAccountSchemaType) {
         const hashedPassword = await bcrypt.hash(data.password, 10)
 
 
+        console.log(data.first_name)
+        console.log(data.middle_name)
+        console.log(data.last_name)
+
         // Create the user if not existing
         const user = await db.user.create({
             data: {
@@ -38,6 +42,10 @@ export async function creatUser(data: CreateRoleAccountSchemaType) {
             data: {
               email: user.email,
               accountId: user.id,
+              first_name: data?.first_name,
+              middle_name: data?.middle_name,
+              last_name: data?.last_name,
+
             }
           })
 
