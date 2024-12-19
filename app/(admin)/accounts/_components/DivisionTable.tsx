@@ -53,11 +53,11 @@ export type DivisonOffice = {
     position: string;
     classification: string;
     years_in_service: string;
-    school: String
-    undergraduate_course: String;
-    date_graduated: String
-    doctorate_degree: String
-    master_degree: String
+    school: string
+    undergraduate_course: string;
+    date_graduated: string
+    doctorate_degree: string
+    master_degree: string
   }
 }
 
@@ -229,7 +229,7 @@ export const columns: ColumnDef<DivisonOffice>[] = [
               <DialogHeader>
                 <DialogTitle>Change Status</DialogTitle>
                 <DialogDescription>
-                  Make changes to your user's here. Click save when you're done.
+                  Make changes to your user&apos;s here. Click save when you&apos;re done.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
