@@ -61,6 +61,80 @@ export type DivisonOffice = {
   }
 }
 
+const ActionCell = ({ row }) => {
+  const id = row.original.id;
+  const [suspendReason, setSuspendReason] = useState('suspend');
+  const suspendUser = suspendDivisionUser(id);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleChange = (value) => {
+    setSuspendReason(value);
+  };
+
+  const onSubmit = () => {
+    suspendUser.mutate(suspendReason);
+    setIsOpen(false);
+  };
+
+  return (
+    <>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link href={`editUser/${id}`}>Edit</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => setIsOpen(true)}>
+              <DialogTrigger>Status</DialogTrigger>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Change Status</DialogTitle>
+            <DialogDescription>
+              Make changes to your user&apos;s here. Click save when you&apos;re done.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Select onValueChange={handleChange} defaultValue={suspendReason}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a reason" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Reasons</SelectLabel>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="suspend">Suspend</SelectItem>
+                  <SelectItem value="retired">Retired</SelectItem>
+                  <SelectItem value="transfered">Transfer to other municipality</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={onSubmit}
+              type="submit"
+              disabled={suspendUser.isPending}
+            >
+              {suspendUser.isPending ? 'Saving...' : 'Save changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
 export const columns: ColumnDef<DivisonOffice>[] = [
   {
     accessorKey: 'Name',
@@ -180,90 +254,10 @@ export const columns: ColumnDef<DivisonOffice>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.id
-      const [suspendReason, setSuspendReason] = useState('suspend')
-      const suspendUser = suspendDivisionUser(id)
-      const [isOpen, setIsOpen] = useState(false);
-
-      const handleChange = (value: string) => {
-        setSuspendReason(value)
-      }
-
-
-
-      const onSubmit = () => {
-        suspendUser.mutate(suspendReason)
-        setIsOpen(false)
-      }
-
-      return (
-        <>
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                  asChild
-                >
-                  <Link href={`editUser/${id}`}>
-                    Edit
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setIsOpen(true)} >
-                  <DialogTrigger>
-                    Status
-                  </DialogTrigger>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Change Status</DialogTitle>
-                <DialogDescription>
-                  Make changes to your user&apos;s here. Click save when you&apos;re done.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <Select onValueChange={handleChange} defaultValue={suspendReason}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a reason" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Reasons</SelectLabel>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="suspend">Suspend</SelectItem>
-                      <SelectItem value="retired">Retired</SelectItem>
-                      <SelectItem value="transfered">Transfer to other municipality</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-              <DialogFooter>
-                <Button
-                  onClick={onSubmit}
-                  type="submit"
-                  disabled={suspendUser.isPending}
-                >
-                  {suspendUser.isPending ? 'Saving...' : 'Save changes'}
-                </Button>              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-        </>
-      )
-    },
-  },
+    cell: ActionCell  // Now we're using a proper component
+  }
 ]
+
 
 export function DivisionTable() {
   const [sorting, setSorting] = useState<SortingState>([])
