@@ -56,7 +56,6 @@ interface ActionCellProps {
 }
 
 // Define the status options type
-type StatusOption = 'active' | 'suspend' | 'retired' | 'transfered';
 
 export type DivisonOffice = {
   id: string,
@@ -77,6 +76,31 @@ export type DivisonOffice = {
     doctorate_degree: string
     master_degree: string
   }
+}
+
+interface Account {
+  id: number | string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  sex: string;
+  email: string;
+  position: string;
+  classification: string;
+  years_in_service: number;
+  undergraduate_course: string;
+  date_graduated: string;
+  doctorate_degree: string;
+  master_degree: string;
+}
+
+interface DivisionOfficeItem {
+  account: Account;
+  status: string;
+}
+
+interface DivisionOfficeData {
+  data?: DivisionOfficeItem[];
 }
 
 export const ActionCell = ({ row }: ActionCellProps) => {
@@ -310,7 +334,7 @@ export function DivisionTable() {
 
   const handleExportToExcel = () => {
     // Prepare data for export
-    const exportData = divisionOfficeData.data?.map((item: any) => ({
+    const exportData = divisionOfficeData.data?.map((item: DivisionOfficeItem) => ({
       'id': item.account.id,
       'Full Name': `${item.account.first_name} ${item.account.middle_name} ${item.account.last_name}`,
       'Sex': item.account.sex,
