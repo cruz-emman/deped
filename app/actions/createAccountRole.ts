@@ -5,7 +5,6 @@ import { db } from '@/lib/db'
 import bcrypt from 'bcryptjs'
 import { CreateRoleAccountSchema, CreateRoleAccountSchemaType } from '@/lib/zod-schema'
 
-type Affiliation = 'division_office' | 'school'; // Ensure this matches the schema definition
 
 
 export async function CreateAccountActionRole(form: CreateRoleAccountSchemaType) {
