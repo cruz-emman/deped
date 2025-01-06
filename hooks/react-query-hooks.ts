@@ -66,7 +66,6 @@ export const getCurrentCredentials = (id: string | string[]) => useQuery({
 
 export const updateCurrentCredential = (id: string | string[]) => {
     const queryClient = useQueryClient()
-    const router = useRouter()
 
     return useMutation({
         mutationKey: ['updateCredentials', id],
