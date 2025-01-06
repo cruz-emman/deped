@@ -19,7 +19,7 @@ const UserCredentials = () => {
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['mycredential', id],
     queryFn: async () => {
       const res = await axios.get(`/api/client/client-credential/${id}`)
@@ -50,6 +50,7 @@ const UserCredentials = () => {
       toast({
         title: "Error"
       })
+      console.log(error)
     }
   })
 
