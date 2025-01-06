@@ -5,7 +5,6 @@ import Image from 'next/image'
 import React from 'react'
 
 const Main = () => {
-  const user = useCurrentUser()
 
   return (
     <>

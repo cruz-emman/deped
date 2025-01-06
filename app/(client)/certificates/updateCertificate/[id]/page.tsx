@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { school_hours } from '@/lib/school-choices'
-import { getSingleCertificate, updateSingleCertificateMutation } from '@/hooks/react-query-hooks'
+import { getSingleCertificate, UpdateSingleCertificateMutation } from '@/hooks/react-query-hooks'
 import { useParams } from 'next/navigation'
 import SkeletonWrapper from '@/components/skeleton-wrapper'
 import { UpdateCertificateSchema, UpdateCertificateSchemaType } from '@/lib/zod-schema'
@@ -22,9 +22,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 const updateCertificate = () => {
   const { id } = useParams<{ id: string }>();
-  const {data: singleCertificate, isLoading: singleCertificateIsLoading, error: singleCertificateError} = getSingleCertificate(id)
+  const {data: singleCertificate, isLoading: singleCertificateIsLoading} = getSingleCertificate(id)
 
-  const updateCertificate = updateSingleCertificateMutation(id)
+  const UpdateCertificate = UpdateSingleCertificateMutation(id)
 
 
   const form = useForm<UpdateCertificateSchemaType>({
@@ -50,8 +50,8 @@ const updateCertificate = () => {
 
 
   const onSubmit = useCallback((values: UpdateCertificateSchemaType) => {
-    updateCertificate.mutate(values)
-  }, [updateCertificate])
+    UpdateCertificate.mutate(values)
+  }, [UpdateCertificate])
   
 
 

@@ -110,7 +110,7 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
-          <p className='text-sm text-muted-foreground'>Don't have an account? email at <span className='text-blue-400 underline'>admin@email.com</span></p>
+          <p className='text-sm text-muted-foreground'>Don&apos;t have an account? email at <span className='text-blue-400 underline'>admin@email.com</span></p>
 
           <Button
             disabled={isPending}

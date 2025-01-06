@@ -102,7 +102,7 @@ const EditUser = () => {
                         />
 
                         <div className="flex items-center pt-1 space-x-2">
-                          <Switch id="force-change" onClick={(e) => setForcePassword((prev) => !prev)} />
+                          <Switch id="force-change" onClick={() => setForcePassword((prev) => !prev)} />
                           <Label htmlFor="force-change">Force Change </Label>
                         </div>
 
