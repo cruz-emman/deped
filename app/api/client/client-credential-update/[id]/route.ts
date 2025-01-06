@@ -42,6 +42,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         return NextResponse.json(updateAccount)
 
     } catch (error) {
+        console.log(error)
         return NextResponse.json({message: "Server Error"}, {status: 500})
     }
 

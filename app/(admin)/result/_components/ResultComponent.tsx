@@ -1,22 +1,14 @@
 'use client'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { toast } from '@/hooks/use-toast'
-import { useCurrentAffiliation } from '@/hooks/user-affiliation'
 import { differenceInDays, endOfMonth, startOfMonth } from 'date-fns'
 import React, { useState } from 'react'
 
 const ResultComponent = () => {
-
-  const userAffiliation = useCurrentAffiliation()
-
-  console.log(userAffiliation)
-
   const [dateRange, setDateRange] = useState<{ from: Date, to: Date }>({
     from: startOfMonth(new Date()),
     to: endOfMonth(new Date())
   })
-
-  const [affiliation, setAffiliation] = useState("")
 
 
   return (

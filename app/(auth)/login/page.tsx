@@ -51,6 +51,7 @@ const LoginForm = () => {
       toast({
         title: "Unable to login account"
       })
+      console.error(error)
     }
   })
 

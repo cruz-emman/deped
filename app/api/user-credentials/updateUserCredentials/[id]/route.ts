@@ -3,6 +3,17 @@ import { NextRequest, NextResponse } from "next/server"
 import bcrypt from 'bcryptjs'
 import { revalidatePath } from "next/cache"
 
+
+interface UserUpdateData {
+    name?: string;
+    email?: string;
+    password?: string;
+    role?: string;
+    affiliation?: string;
+}
+
+
+
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }){
     try {
         const body = await req.json()
@@ -38,7 +49,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         }
 
         // Prepare update data
-        const updateData: any = {}
+        const updateData: UserUpdateData = {}
 
         // Only update fields that are provided
         if (name) updateData.name = name
@@ -55,6 +66,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             where: {
                 id: params.id
             },
+            //@ts-expect-error
             data: updateData
         })
        

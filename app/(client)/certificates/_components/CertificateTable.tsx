@@ -13,17 +13,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, DeleteIcon, Edit2, MoreHorizontal } from "lucide-react"
+import {  ChevronDown, DeleteIcon, Edit2, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -35,9 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
-import { useParams } from "next/navigation"
 import { format } from "date-fns"
 import { deleteCertificate, getCertificateTable } from "@/hooks/react-query-hooks"
 
@@ -47,10 +43,10 @@ import { deleteCertificate, getCertificateTable } from "@/hooks/react-query-hook
 export type CertificateTableType = {
   id: string;
   accountId: string;
-  training_title: String,
-  training_year: String,
+  training_title: string,
+  training_year: string,
   training_from: string,
-  training_to: String,
+  training_to: string,
   training_number_of_hours: string
   training_sponsored_by: string
   training_category: string

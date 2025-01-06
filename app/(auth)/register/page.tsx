@@ -10,14 +10,12 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { RegisterSchema, RegisterSchemaType } from '@/lib/zod-schema'
-import { z } from 'zod'
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from '@/hooks/use-toast'
 import { RegisterAccountAction } from '../../actions/register'
 import { useRouter } from 'next/navigation'
-import { Label } from '@/components/ui/label'
 import Image from 'next/image'
 
 const RegisterForm = () => {
@@ -99,7 +97,7 @@ const RegisterForm = () => {
               </FormItem>
             )}
           />
-          <p className='text-sm text-muted-foreground'>Don't have an account? email at <span className='text-blue-400 underline'>admin@email.com</span></p>
+          <p className='text-sm text-muted-foreground'>Don&lsquo;t have an account? email at <span className='text-blue-400 underline'>admin@email.com</span></p>
 
           <Button
             disabled={isPending}

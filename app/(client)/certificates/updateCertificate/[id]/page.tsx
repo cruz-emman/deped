@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,7 +12,6 @@ import React, { useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-
 import { Input } from '@/components/ui/input'
 import { school_hours } from '@/lib/school-choices'
 import { getSingleCertificate, updateSingleCertificateMutation } from '@/hooks/react-query-hooks'
@@ -21,9 +19,6 @@ import { useParams } from 'next/navigation'
 import SkeletonWrapper from '@/components/skeleton-wrapper'
 import { UpdateCertificateSchema, UpdateCertificateSchemaType } from '@/lib/zod-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-import { toast } from '@/hooks/use-toast'
 
 const updateCertificate = () => {
   const { id } = useParams<{ id: string }>();

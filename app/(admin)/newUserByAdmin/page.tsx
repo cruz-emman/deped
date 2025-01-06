@@ -3,11 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
 } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 
@@ -15,9 +13,6 @@ import React, { useCallback } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { school_positions, school_years_in_service, schools_classifications } from '@/lib/school-choices'
-import { division_positions, division_years_of_service, divison_classification } from '@/lib/division-choices'
 import { Button } from '@/components/ui/button'
 import { CreateRoleAccountSchema, CreateRoleAccountSchemaType } from '@/lib/zod-schema'
 import { CreateAccountActionRole } from '@/app/actions/createAccountRole'

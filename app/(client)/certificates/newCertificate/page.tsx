@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/form"
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, } from 'react'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { school_hours, school_years_in_service } from '@/lib/school-choices'
+import { school_hours, } from '@/lib/school-choices'
 import { NewCertificateAction } from '@/app/actions/newCertificate'
 import { toast } from '@/hooks/use-toast'
 import { useMutation } from '@tanstack/react-query'
@@ -65,6 +65,7 @@ const NewCertificate = () => {
       toast({
         title: "Unable to login account"
       })
+      console.log(error)
     }
   })
 

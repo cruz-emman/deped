@@ -1,6 +1,5 @@
 import { db } from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
-import bcrypt from 'bcryptjs'
 import { revalidatePath } from "next/cache"
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }){
