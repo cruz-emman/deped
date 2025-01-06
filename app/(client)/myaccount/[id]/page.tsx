@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import UpdateAccountComponent from "../_components/UpdateAccount";
 
 

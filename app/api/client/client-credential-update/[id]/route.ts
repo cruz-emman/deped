@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from 'bcryptjs'
 import { revalidatePath } from "next/cache";
 
+
+
+
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-
-
     try {
-
         const body = await request.json()
         const {
             name,

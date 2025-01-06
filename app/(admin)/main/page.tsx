@@ -1,6 +1,5 @@
 'use client'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
-import { useCurrentUser } from '@/hooks/user-current'
 import Image from 'next/image'
 import React from 'react'
 

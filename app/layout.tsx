@@ -10,7 +10,8 @@ export const metadata: Metadata = {
   description: "DEPED MALABON",
 };
 
-export default async function RootLayout({ children }: { children: any }) {
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   return (
     <html>

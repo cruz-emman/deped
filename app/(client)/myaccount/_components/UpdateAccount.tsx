@@ -10,9 +10,6 @@ import {
     FormItem,
     FormLabel,
 } from "@/components/ui/form"
-import { Label } from '@/components/ui/label'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { toast } from '@/hooks/use-toast'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,7 +27,7 @@ const UpdateAccountComponent = () => {
     const router = useRouter()
     const role = useCurrentRole()
 
-    const { data, isLoading: userAccountisLoading, error: userAccountIsError } = getSingleAccount(id)
+    const { data, isLoading: userAccountisLoading, } = getSingleAccount(id)
     const updateAccount = updateSingleAccount(id)
 
     const [openPositionOther, setOpenPositionOther] = useState(false)
