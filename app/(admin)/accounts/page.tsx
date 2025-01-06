@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useCurrentRole } from '@/hooks/user-role'
 import { useCurrentAffiliation } from '@/hooks/user-affiliation'
-import { useRouter } from 'next/navigation'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import * as XLSX from 'xlsx'
@@ -51,7 +50,7 @@ const Accounts = () => {
   
 const { mutate: importUsers, isPending } = useMutation({
   mutationFn: async (jsonData: ProcessedRow[]) => {
-    //@ts-ignore
+    //@ts-expect-error
     await createBulkUser(jsonData);
   },
   onSuccess: () => {

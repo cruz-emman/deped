@@ -1,21 +1,17 @@
 'use client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { useCurrentRole } from '@/hooks/user-role'
-import { CreateRoleAccountSchema, CreateRoleAccountSchemaType, UpdateRoleAccountSchema, UpdateRoleAccountSchemaType } from '@/lib/zod-schema'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { SelectValue } from '@radix-ui/react-select'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
-import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import SkeletonWrapper from '@/components/skeleton-wrapper'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
-import { toast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import AccountDetails from './_components/AccountDetails'
 import { getCurrentCredentials, updateCurrentCredential } from '@/hooks/react-query-hooks'
@@ -24,7 +20,6 @@ const EditUser = () => {
 
   const role = useCurrentRole()
   const { id } = useParams()
-  const queryClient = useQueryClient()
 
 
   const [forcePassword, setForcePassword] = useState(true)

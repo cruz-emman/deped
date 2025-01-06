@@ -1,10 +1,8 @@
 'use client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React, { useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import axios from 'axios'
 import { useParams } from 'next/navigation'
 import SkeletonWrapper from '@/components/skeleton-wrapper'
 import { UpdateAccountSchema, UpdateAccountSchemaType } from '@/lib/zod-schema'
@@ -16,8 +14,7 @@ import { division_office, division_positions, division_unitsArray, division_year
 import { school_positions, school_years_in_service, schools, schools_classifications } from '@/lib/school-choices'
 import { useCurrentRole } from '@/hooks/user-role'
 import { Button } from '@/components/ui/button'
-import { toast } from '@/hooks/use-toast'
-import { Update } from 'next/dist/build/swc'
+
 import { getAccountDetails, updateAccount } from '@/hooks/react-query-hooks'
 
 const AccountDetails = ({ affiliationOfUser }: { affiliationOfUser: string | undefined }) => {
@@ -27,9 +24,6 @@ const AccountDetails = ({ affiliationOfUser }: { affiliationOfUser: string | und
 
     const UpdateAccountDetail = updateAccount(id)
     const AccountDetail = getAccountDetails(id)
-
-    console.log(role)
-
 
 
 
