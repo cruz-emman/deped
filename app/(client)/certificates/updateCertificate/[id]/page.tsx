@@ -14,17 +14,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { school_hours } from '@/lib/school-choices'
-import { getSingleCertificate, UpdateSingleCertificateMutation } from '@/hooks/react-query-hooks'
+import { getSingleCertificate, useUpdateSingleCertificateMutation } from '@/hooks/react-query-hooks'
 import { useParams } from 'next/navigation'
 import SkeletonWrapper from '@/components/skeleton-wrapper'
 import { UpdateCertificateSchema, UpdateCertificateSchemaType } from '@/lib/zod-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-const updateCertificate = () => {
+const UpdateCertificate = () => {
   const { id } = useParams<{ id: string }>();
   const {data: singleCertificate, isLoading: singleCertificateIsLoading} = getSingleCertificate(id)
 
-  const UpdateCertificate = UpdateSingleCertificateMutation(id)
+  const UpdateCertificate = useUpdateSingleCertificateMutation(id)
 
 
   const form = useForm<UpdateCertificateSchemaType>({
@@ -262,4 +262,4 @@ const updateCertificate = () => {
   )
 }
 
-export default updateCertificate
+export default UpdateCertificate

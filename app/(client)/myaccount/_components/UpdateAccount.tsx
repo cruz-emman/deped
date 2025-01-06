@@ -1,7 +1,7 @@
 'use client'
 import { AccountSchema, AccountSchemaType } from '@/lib/zod-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
     Form,
@@ -24,7 +24,6 @@ import { getSingleAccount, updateSingleAccount } from '@/hooks/react-query-hooks
 import SkeletonWrapper from '@/components/skeleton-wrapper'
 const UpdateAccountComponent = () => {
     const { id } = useParams()
-    const router = useRouter()
     const role = useCurrentRole()
 
     const { data, isLoading: userAccountisLoading, } = getSingleAccount(id)
