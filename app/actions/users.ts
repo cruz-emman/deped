@@ -16,16 +16,12 @@ export async function creatUser(data: CreateRoleAccountSchemaType) {
 
 
         if (existingUser) {
-            console.log(`User with email ${data.email} already exists. Skipping.`);
             return null; // Skip creation for existing users
         }
 
         const hashedPassword = await bcrypt.hash(data.password, 10)
 
 
-        console.log(data.first_name)
-        console.log(data.middle_name)
-        console.log(data.last_name)
 
         // Create the user if not existing
         const user = await db.user.create({
@@ -64,6 +60,7 @@ export async function createBulkUser(users: CreateRoleAccountSchemaType[]) {
 
             const createdUser = await creatUser(user);
             if (createdUser) {
+                //@ts-ignore
                 createdUsers.push(createdUser); // Only add successfully created users
             }
         }
