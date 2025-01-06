@@ -99,9 +99,7 @@ interface DivisionOfficeItem {
   status: string;
 }
 
-interface DivisionOfficeData {
-  data?: DivisionOfficeItem[];
-}
+
 
 export const ActionCell = ({ row }: ActionCellProps) => {
   const id = row.original.id;

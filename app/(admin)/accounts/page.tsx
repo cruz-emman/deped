@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DivisionTable } from './_components/DivisionTable'
 import { SchoolTable } from './_components/SchoolTable'
 import { Button } from '@/components/ui/button'
@@ -16,9 +15,32 @@ import { createBulkUser } from '@/app/actions/users'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from '@/hooks/use-toast'
 
+
+interface ExcelRow {
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: string;
+  affiliation?: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+}
+
+interface ProcessedRow {
+  name: string | null;
+  email: string | null;
+  password: string | null;
+  role: string;
+  affiliation: string;
+  first_name: string | undefined;
+  middle_name: string | undefined;
+  last_name: string | undefined;
+}
+
+
 const Accounts = () => {
 
-  const router = useRouter()
   const role = useCurrentRole()
   const affiliation = useCurrentAffiliation()
 
@@ -26,23 +48,25 @@ const Accounts = () => {
   const [file, setFile] = useState<File | null>(null)
 
 
-  const { mutate: importUsers, isPending } = useMutation({
-    mutationFn: async (jsonData: any[]) => {
-      await createBulkUser(jsonData);
-    },
-    onSuccess: () => {
-      toast({
-        title: 'Data imported successfully!'
-      }),
-      window.location.reload();
-    },
-    onError: (error) => {
-      console.error(error);
-      toast({
-        title: 'An error occurred while importing data.'
-      });
-    },
-  });
+  
+const { mutate: importUsers, isPending } = useMutation({
+  mutationFn: async (jsonData: ProcessedRow[]) => {
+    //@ts-ignore
+    await createBulkUser(jsonData);
+  },
+  onSuccess: () => {
+    toast({
+      title: 'Data imported successfully!'
+    }),
+    window.location.reload();
+  },
+  onError: (error) => {
+    console.error(error);
+    toast({
+      title: 'An error occurred while importing data.'
+    });
+  },
+});
 
   const handleFileUpload = () => {
     if (!file) {
@@ -61,7 +85,7 @@ const Accounts = () => {
         const workSheet = workbook.Sheets[sheetName];
 
         // Convert sheet to JSON and ensure plain objects
-        const jsonData = XLSX.utils.sheet_to_json(workSheet).map((row: any) => ({
+        const jsonData: ProcessedRow[] = (XLSX.utils.sheet_to_json(workSheet) as ExcelRow[]).map((row) => ({
           name: row.name || null,
           email: row.email || null,
           password: row.password || null,
@@ -70,7 +94,7 @@ const Accounts = () => {
           first_name: row.first_name,
           middle_name: row.middle_name,
           last_name: row.last_name,
-        }));
+        }))
 
         // Call the server function
         importUsers(jsonData); // Trigger the mutation

@@ -16,15 +16,13 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import {
@@ -35,7 +33,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useQuery } from "@tanstack/react-query"
 import { getSchoolTable } from "@/hooks/react-query-hooks"
 import Link from "next/link"
 
@@ -52,7 +49,7 @@ export type Office = {
     position: string;
     classification: string;
     years_in_service: string;
-    school: String
+    school: string
   }
 }
 
@@ -62,7 +59,7 @@ export const columns: ColumnDef<Office>[] = [
     accessorKey: 'fullname',
     header: 'Full Name',
     cell: ({ row }) => {
-      let fullName = row.original?.account.first_name + " " + row.original?.account.middle_name + " " + row.original?.account.last_name || ""
+      const fullName = row.original?.account.first_name + " " + row.original?.account.middle_name + " " + row.original?.account.last_name || ""
       return (
         <div className="capitalize">{fullName}</div>
       )

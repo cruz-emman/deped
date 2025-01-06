@@ -5,7 +5,7 @@ export default function SignOutPage() {
     <div>
       <h5>Are you sure you want to sign out?</h5>
       <form
-        action={async (formData) => {
+        action={async () => {
           "use server"
           await signOut()
         }}

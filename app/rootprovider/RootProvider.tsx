@@ -12,6 +12,7 @@ export const Providers = ({
   children,
   session,
 }:{
+  //@ts-ignore
   children: any
   session: Session | null;
 }) => (

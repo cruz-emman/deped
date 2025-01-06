@@ -1,6 +1,6 @@
 "use client"
 
-import { Calendar, Home, Inbox, Search, Settings, ChartBar, Users2, FileUser, User, Lock } from "lucide-react"
+import { Home ,  Users2, FileUser, User, Lock } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -14,9 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import SignOutButton from "./signout"
 import Link from "next/link"
-import { useCurrentUser } from "@/hooks/user-current"
 import { useCurrentRole } from "@/hooks/user-role"
-import { useCurrentAffiliation } from "@/hooks/user-affiliation"
 import { useQuery } from "@tanstack/react-query"
 import { useCurrentSessionId } from "@/hooks/user-sessionId"
 
@@ -28,7 +26,7 @@ export function AppSidebar() {
   const role = useCurrentRole()
   const sessionId = useCurrentSessionId()
 
-  const { isPending, error, data } = useQuery({
+  const { data } = useQuery({
     queryKey: ['user', sessionId],
     queryFn: async () => {
       const res = await fetch(`/api/authorizeAccount/${sessionId}`)
