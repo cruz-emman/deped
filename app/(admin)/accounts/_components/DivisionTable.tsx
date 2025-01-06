@@ -334,7 +334,7 @@ export function DivisionTable() {
 
   const handleExportToExcel = () => {
     // Prepare data for export
-    const exportData = divisionOfficeData.data?.map((item: DivisionOfficeItem) => ({
+    const exportData = divisionOfficeData.data?.map((item: DivisionOfficeItem ) => ({
       'id': item.account.id,
       'Full Name': `${item.account.first_name} ${item.account.middle_name} ${item.account.last_name}`,
       'Sex': item.account.sex,
