@@ -192,7 +192,7 @@ export const getSingleCertificate = (id: string) => useQuery({
 
 })
 
-export const UpdateSingleCertificateMutation = (id: string) => {
+export const useUpdateSingleCertificateMutation = (id: string) => {
     const queryClient = useQueryClient()
     const router = useRouter()
     return useMutation({
