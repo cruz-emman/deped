@@ -23,10 +23,5 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/api/school_table"],
   "exclude": ["node_modules"],
-  "eslintConfig": {
-  "rules": {
-   "no-unused-vars": 0,
-   "@typescript-eslint/no-unused-vars": 0
-  }
-}
+  
 }
