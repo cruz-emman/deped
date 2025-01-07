@@ -3,7 +3,20 @@ import { db } from "@/lib/db";
 import { CreateRoleAccountSchemaType } from "@/lib/zod-schema";
 import { revalidatePath } from "next/cache";
 import bcrypt from 'bcryptjs'
+import { Affiliation, Role, Status } from "@prisma/client";
 
+type UserCreationResult = {
+    id: string;
+    name: string | null;
+    email: string;
+    emailVerified: Date | null;
+    image: string | null;
+    role: Role;
+    affiliation: Affiliation;
+    status: Status;
+    createdAt: Date;
+    updatedAt: Date;
+  } | null;
 
 export async function creatUser(data: CreateRoleAccountSchemaType) {
     try {
@@ -54,7 +67,7 @@ export async function creatUser(data: CreateRoleAccountSchemaType) {
 }
 export async function createBulkUser(users: CreateRoleAccountSchemaType[]) {
     try {
-        const createdUsers = [];
+        const createdUsers: UserCreationResult[] = [];
         for (const user of users) {
             // Perform server-side validation or transformation if needed
 
