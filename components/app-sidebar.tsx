@@ -1,6 +1,6 @@
 "use client"
 
-import { Home ,  Users2, FileUser, User, Lock } from "lucide-react"
+import { Home, Users2, FileUser, User, Lock } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -34,7 +34,7 @@ export function AppSidebar() {
     }
   })
 
-
+  console.log(role)
 
   if (role === 'super_admin') {
     return <UserAdminAccount />
