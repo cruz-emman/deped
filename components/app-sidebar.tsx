@@ -121,11 +121,11 @@ function UserDivisionOfficeAccount({ id }: { id: string | undefined }) {
       url: `/myaccount/${id}`,
       icon: Users2,
     },
-    // {
-    //   title: "Certificates",
-    //   url: `/certificates/${id}`,
-    //   icon: FileUser
-    // },
+    {
+      title: "Certificates",
+      url: `/certificates/${id}`,
+      icon: FileUser
+    },
     {
       title: "Change Password",
       url: `/mycredentials/${id}`,
