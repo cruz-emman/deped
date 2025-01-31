@@ -91,8 +91,8 @@ export type CreateRoleAccountSchemaType = z.infer<typeof CreateRoleAccountSchema
 export const CertificateSchema = z.object({
     training_title: z.string().min(2, { message: "Title must be at least 2 letters" }),
     training_year: z.string().min(2, { message: "Training year must be selected" }),
-    training_from: z.string().min(2, { message: "Select Date" }),
-    training_to: z.string().min(2, { message: "Select Date" }),
+    training_from: z.string().min(2, { message: "Please Select date" }),
+    training_to: z.string().min(2, { message: "Please Select date" }),
     training_number_of_hours: z.string().min(2, { message: "Number of years" }),
     training_sponsored_by: z.string().min(2, { message: "Sponsored by must be at least 2 letters" }),
     training_name_of_provider: z.string().min(2, { message: "Name of provider must be at least 2 letters" }),

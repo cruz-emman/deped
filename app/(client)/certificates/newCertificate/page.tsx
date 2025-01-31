@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form"
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useCallback, } from 'react'
+import React, { useCallback, useState, } from 'react'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,8 +21,19 @@ import { NewCertificateAction } from '@/app/actions/newCertificate'
 import { toast } from '@/hooks/use-toast'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
+import { CalendarIcon } from 'lucide-react'
+import { format } from 'date-fns'
+import { Calendar } from '@/components/ui/calendar'
+import { CalendarDropdown } from '@/components/ui/calendar-dropdown'
 
 const NewCertificate = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [date, setDate] = useState<Date | null>(null);
+
+  const [isOpenTo, setIsOpenTo] = useState(false);
+  const [dateTo, setDateTo] = useState<Date | null>(null);
 
   const router = useRouter()
 
@@ -72,6 +83,8 @@ const NewCertificate = () => {
   const onSubmit = useCallback((values: CertificateSchemaType) => {
     mutate(values)
   }, [mutate])
+
+
 
 
 
@@ -127,33 +140,36 @@ const NewCertificate = () => {
                   <div className="bg-muted px-4 py-2 font-medium text-sm">
                     INCLUSIVE DATES OF ATTENDANCE (dd/mm/yyyy)
                   </div>
-                  <div className="flex">
-                    <FormField
-                      control={form.control}
-                      name="training_from"
-                      render={({ field }) => (
-                        <FormItem className="flex-1 px-4 py-2 border-r">
-                          <FormLabel className="text-xs uppercase">From</FormLabel>
-                          <FormControl>
-                            <Input type="date" placeholder="dd/mm/yyyy" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="training_to"
-                      render={({ field }) => (
-                        <FormItem className="flex-1 px-4 py-2">
-                          <FormLabel className="text-xs uppercase">To</FormLabel>
-                          <FormControl>
-                            <Input type="date" placeholder="dd/mm/yyyy" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <div className="flex gap-x-4 p-4">
+                  <FormField
+                control={form.control}
+                name="training_from"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Training From</FormLabel>
+                    <FormControl>
+                      <Input type="date" placeholder="Enter training title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+<FormField
+                control={form.control}
+                name="training_to"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Training From</FormLabel>
+                    <FormControl>
+                      <Input type="date" placeholder="Enter training title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+
                   </div>
                 </div>
               </div>
@@ -209,7 +225,7 @@ const NewCertificate = () => {
                   </FormItem>
                 )}
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name="training_category"
                 render={({ field }) => (
@@ -228,7 +244,7 @@ const NewCertificate = () => {
                     <FormMessage />
                   </FormItem>
                 )}
-              /> 
+              />
               <FormField
                 control={form.control}
                 name="training_international"

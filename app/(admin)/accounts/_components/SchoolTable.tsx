@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import { useState } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -22,7 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-    DropdownMenuTrigger,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import {
@@ -33,9 +33,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getSchoolTable } from "@/hooks/react-query-hooks"
+import { getSchoolTable, suspendDivisionUser } from "@/hooks/react-query-hooks"
 import Link from "next/link"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectValue } from "@/components/ui/select"
+import { SelectLabel, SelectTrigger } from "@radix-ui/react-select"
 
+
+interface User {
+  id: string;
+  // Add other user properties as needed
+}
+
+// Define the row type
+interface Row {
+  original: User;
+}
+
+// Define props type for the component
+interface ActionCellProps {
+  row: Row;
+}
 
 export type Office = {
   id: string;
@@ -53,6 +71,88 @@ export type Office = {
   }
 }
 
+
+export const ActionCell = ({ row }: ActionCellProps) => {
+  const id = row.original.id;
+  const [suspendReason, setSuspendReason] = useState('suspend');
+  const suspendUser = suspendDivisionUser(id);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleChange = (value: string) => {
+    setSuspendReason(value);
+  };
+
+  const onSubmit = () => {
+    suspendUser.mutate(suspendReason);
+    setIsOpen(false);
+  };
+
+
+
+
+  return (
+    <>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link href={`editUser/${id}`}>Edit</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild >
+              <Link href={`accounts/certificates/${id}`}>
+                View Certificates
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => setIsOpen(true)}>
+              <DialogTrigger>Status</DialogTrigger>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Change Status</DialogTitle>
+            <DialogDescription>
+              Make changes to your user&apos;s here. Click save when you&apos;re done.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Select onValueChange={handleChange} defaultValue={suspendReason}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a reason" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Reasons</SelectLabel>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="suspend">Suspend</SelectItem>
+                  <SelectItem value="retired">Retired</SelectItem>
+                  <SelectItem value="transfered">Transfer to other municipality</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={onSubmit}
+              type="submit"
+              disabled={suspendUser.isPending}
+            >
+              {suspendUser.isPending ? 'Saving...' : 'Save changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
 
 export const columns: ColumnDef<Office>[] = [
   {
@@ -131,48 +231,22 @@ export const columns: ColumnDef<Office>[] = [
     }
   },
 
-
   {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-
-
-      const id = row.original.id
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-            asChild
-            >
-              <Link href={`editUser/${id}`}>
-                Edit
-              </Link>
-            </DropdownMenuItem>
-
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
+      id: "actions",
+      enableHiding: false,
+      cell: ActionCell  // Now we're using a proper component
+  }
 ]
 
+
 export function SchoolTable() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
 
 
 

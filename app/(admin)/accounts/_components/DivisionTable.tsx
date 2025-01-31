@@ -116,6 +116,9 @@ export const ActionCell = ({ row }: ActionCellProps) => {
     setIsOpen(false);
   };
 
+
+
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -130,6 +133,11 @@ export const ActionCell = ({ row }: ActionCellProps) => {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <Link href={`editUser/${id}`}>Edit</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild >
+              <Link href={`accounts/certificates/${id}`}>
+                View Certificates
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => setIsOpen(true)}>
               <DialogTrigger>Status</DialogTrigger>
@@ -332,7 +340,7 @@ export function DivisionTable() {
 
   const handleExportToExcel = () => {
     // Prepare data for export
-    const exportData = divisionOfficeData.data?.map((item: DivisionOfficeItem ) => ({
+    const exportData = divisionOfficeData.data?.map((item: DivisionOfficeItem) => ({
       'id': item.account.id,
       'Full Name': `${item.account.first_name} ${item.account.middle_name} ${item.account.last_name}`,
       'Sex': item.account.sex,

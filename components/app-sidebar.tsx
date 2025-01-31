@@ -36,20 +36,32 @@ export function AppSidebar() {
 
 
 
+  //This is admin side wherein may CRUD for Division Office and Admin
   if (role === 'super_admin') {
     return <UserAdminAccount />
   }
 
+  //Main division Office admin
   if (role === 'division_office_admin') {
     return <DivisionOfficeAdminSideBar />
   }
 
+  //For School Admn
   if (role === 'school_admin') {
     return <SchoolOfficeAdminSideBar />
   }
 
+  //Under division office but not admin
+
   if (role === 'division_office') {
-    return <UserDivisionOfficeAccount id={sessionId} />
+    return <UserAccount id={sessionId} />
+  }
+
+  //Under school admin office but not admin
+
+  if(role === 'teacher'){
+    return <UserAccount id={sessionId} />
+
   }
 
   // Otherwise, show regular user account based on data
@@ -108,7 +120,7 @@ function UserAdminAccount() {
 
 }
 
-function UserDivisionOfficeAccount({ id }: { id: string | undefined }) {
+function UserAccount({ id }: { id: string | undefined }) {
   const items = [
     {
       title: "Home",

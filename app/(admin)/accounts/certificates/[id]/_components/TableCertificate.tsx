@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -10,11 +9,12 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  getFacetedUniqueValues,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import {  ChevronDown, DeleteIcon, Edit2, MoreHorizontal } from "lucide-react"
-
+import { ChevronDown, DeleteIcon, Edit2, MoreHorizontal } from "lucide-react"
+import Filter from "@/components/ui/react-table/Filter"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -34,11 +34,17 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import Link from "next/link"
-import { format } from "date-fns"
-import { deleteCertificate, getCertificateTable } from "@/hooks/react-query-hooks"
+import { format, isAfter, isBefore, parseISO } from "date-fns"
+import { deleteCertificate, getAccountsCertificatesTable, getCertificateTable } from "@/hooks/react-query-hooks"
+import { useParams } from 'next/navigation'
+import Loading from "@/app/loading"
+import { useEffect, useMemo, useState } from "react"
 
 
-
+interface Props {
+  from: Date;
+  to: Date;
+}
 
 export type CertificateTableType = {
   id: string;
@@ -57,166 +63,103 @@ export type CertificateTableType = {
   training_certificate_path: string
 }
 
-export const columns: ColumnDef<CertificateTableType>[] = [
-  {
-    accessorKey: 'training_title',
-    header: 'Training Title',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_title}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'Year',
-    header: 'Year',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_year}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'From',
-    header: 'From',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {format(new Date(row.original.training_from), 'MMMM dd, yyyy')}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'End',
-    header: 'End',
-    cell: ({ row }) => {
-      return (
-        <div>
-           {format(new Date(row.original.training_to as string), 'MMMM dd, yyyy')}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'No of Hours',
-    header: 'No. of Hours',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_number_of_hours}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'Conducted / Sponsors',
-    header: 'Conducted / Sponsors',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_sponsored_by}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'Service Provider',
-    header: 'Service Provider',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_name_of_provider}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'Category',
-    header: 'Category',
-    cell: ({ row }) => {
-      
-      return (
-        <div>
-          {row.original.training_category.split('_')[0]}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'International / Local',
-    header: 'International / Local',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_international}
-        </div>
-      )
-    }
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
 
 
-      const id = row.original.id
 
-      const deleteCertificateMutation = deleteCertificate();
+function AccountsCertificateTable({ from, to }: Props) {
+  const params = useParams()
+  const certificateTable = getAccountsCertificatesTable(params.id, from, to)
 
-      const handleDelete = (id: string) => {
-        deleteCertificateMutation.mutate(id);
-      };
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: 'training_title', // Correct: Matches the property name
+        header: 'Training Title',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_year',  // Correct: Matches the property name
+        header: 'Year',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_from',
+        header: 'From',
+        cell: ({ row }) => format(parseISO(row.original.training_from), 'MMM dd, yyyy'), // Parse and format in cell
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          if (!filterValue) return true; // Show all rows if filter is empty
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <Edit2 className="h-4 w-4 text-blue-400/90" />
-              <Link href={`/certificates/updateCertificate/${id}`}>
-                Edit
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleDelete(id)}
-            >
-              <DeleteIcon className="h-4 w-4 text-red-400/90" />  Delete
-            </DropdownMenuItem>
+          const rowDate = parseISO(row.original.training_from);
+          const filterDate = parseISO(filterValue);
 
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
+          return rowDate >= filterDate; // Example: filter for dates greater than or equal to the input
+        },
+      },
+      {
+        accessorKey: 'training_to',
+        header: 'End',
+        cell: ({ row }) => format(parseISO(row.original.training_to), 'MMM dd, yyyy'), // Parse and format
+        enableColumnFilter: true,
+        filterFn: (row, columnId, filterValue) => {
+          if (!filterValue) return true; // Show all rows if filter is empty
 
-export function CertificateTable({ id }: { id: string | string[] }) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+          const rowDate = parseISO(row.original.training_to);
+          const filterDate = parseISO(filterValue);
+
+          return rowDate <= filterDate; // Example: filter for dates less than or equal to the input
+        },
+      },
+
+      {
+        accessorKey: 'training_number_of_hours', // Correct: Matches the property name
+        header: 'No. of Hours',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_sponsored_by',  // Correct: Matches the property name
+        header: 'Conducted / Sponsors',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_name_of_provider', // Correct: Matches the property name
+        header: 'Service Provider',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_category',  // Correct: Matches the property name
+        header: 'Category',
+        cell: ({ row }) => row.original.training_category?.split('_')[0], // Safe split
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_international', // Correct: Matches the property name
+        header: 'International / Local',
+        enableColumnFilter: true,
+      },
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => { /* ... your actions code ... */ },
+      },
+    ], []
+  );
+
+
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-
-  const certificateTable = getCertificateTable(id)
+    useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
 
 
 
   const table = useReactTable({
     data: certificateTable.data || [],
     columns,
+
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -225,6 +168,7 @@ export function CertificateTable({ id }: { id: string | string[] }) {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     state: {
       sorting,
       columnFilters,
@@ -237,7 +181,7 @@ export function CertificateTable({ id }: { id: string | string[] }) {
 
   if (certificateTable.isLoading) {
     return (
-      <div>Loading...</div>
+      <Loading />
     )
   }
 
@@ -250,14 +194,7 @@ export function CertificateTable({ id }: { id: string | string[] }) {
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter title..."
-          value={(table.getColumn("training_title")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("training_title")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -292,13 +229,27 @@ export function CertificateTable({ id }: { id: string | string[] }) {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    <TableHead
+                      className="bg-secondary p-1"
+                      key={header.id}
+
+                    >
+                      <div>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </div>
+                      {header.column.getCanFilter() ? (
+                        <div className="grid place-content-center">
+                          <Filter
+                            column={header.column}
+
+                          />
+                        </div>
+                      ) : null}
                     </TableHead>
                   )
                 })}
@@ -364,3 +315,5 @@ export function CertificateTable({ id }: { id: string | string[] }) {
 
   )
 }
+
+export default AccountsCertificateTable

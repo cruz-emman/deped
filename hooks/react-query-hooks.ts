@@ -175,6 +175,14 @@ export const updateSingleAccount = (id: string | string[]) => {
 //CERTIFICATES
 //GET HOOKS 
 
+export const getAccountsCertificatesTable = (id: string | string[], from: Date, to: Date) => useQuery({
+    queryKey: ['accountsCertificatesTable',id, from, to],
+    queryFn: async () => {
+        const res = await axios.get(`/api/certificates/getCertificateAdmin/${id}?from=${from}&to=${to}`)
+        return res.data
+    }
+})
+
 export const getCertificateTable = (id: string | string[]) => useQuery({
     queryKey: ['certificateTable'],
     queryFn: async () => {

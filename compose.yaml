@@ -1,0 +1,45 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgres://neondb_owner:npg_g0NTGwWfuPq5@ep-dark-feather-a1wfi9ba-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+      - NEXTAUTH_SECRET=secret
+
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - /app/node_modules
+      - /app/.next
+    develop:
+      watch:
+        - path: ./
+          target: /app
+          ignore:
+            - node_modules/
+            - .next/
+          action: sync
+        - path: package.json
+          action: rebuild
+        - path: package-lock.json
+          action: rebuild
+        - path: next.config.ts
+          action: rebuild
+
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: neondb_owner
+      POSTGRES_PASSWORD: npg_g0NTGwWfuPq5
+      POSTGRES_DB: neondb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U neondb_owner -d neondb"]
+      interval: 10s
+      retries: 5
+    ports:
+      - "5432:5432"

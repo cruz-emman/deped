@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
@@ -19,8 +19,21 @@ import { useParams } from 'next/navigation'
 import SkeletonWrapper from '@/components/skeleton-wrapper'
 import { UpdateCertificateSchema, UpdateCertificateSchemaType } from '@/lib/zod-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
+import { CalendarIcon } from 'lucide-react'
+import { CalendarDropdown } from '@/components/ui/calendar-dropdown'
 
 const UpdateCertificate = () => {
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [date, setDate] = useState<Date | null>(null);
+  
+    const [isOpenTo, setIsOpenTo] = useState(false);
+    const [dateTo, setDateTo] = useState<Date | null>(null);
+  
+
   const { id } = useParams<{ id: string }>();
   const {data: singleCertificate, isLoading: singleCertificateIsLoading} = getSingleCertificate(id)
 
@@ -109,37 +122,106 @@ const UpdateCertificate = () => {
                   <div className="bg-muted px-4 py-2 font-medium text-sm">
                     INCLUSIVE DATES OF ATTENDANCE (dd/mm/yyyy)
                   </div>
-                  <div className="flex">
+                  <div className="flex gap-x-4 p-4">
                     <FormField
                       control={form.control}
                       name="training_from"
-                      defaultValue={singleCertificate?.training_from}
-
                       render={({ field }) => (
-                        <FormItem className="flex-1 px-4 py-2 border-r">
-                          <FormLabel className="text-xs uppercase">From</FormLabel>
-                          <FormControl>
-                            <Input type="date" placeholder="dd/mm/yyyy" {...field} />
-                          </FormControl>
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Training From</FormLabel>
+                          <Popover open={isOpen} onOpenChange={setIsOpen}>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    `${format(field.value, "PPP")}`
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <CalendarDropdown
+                                mode="single"
+                                captionLayout="dropdown"
+                                selected={date || field.value}
+                                onSelect={(selectedDate) => {
+
+                                  setDate(selectedDate!);
+                                  field.onChange(selectedDate);
+                                }}
+                                onDayClick={() => setIsOpen(false)}
+                                fromYear={2000}
+                                toYear={new Date().getFullYear()}
+
+                                defaultMonth={field.value}
+                              />
+                            </PopoverContent>
+                          </Popover>
+
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="training_to"
-                      defaultValue={singleCertificate?.training_to}
-
                       render={({ field }) => (
-                        <FormItem className="flex-1 px-4 py-2">
-                          <FormLabel className="text-xs uppercase">To</FormLabel>
-                          <FormControl>
-                            <Input type="date" placeholder="dd/mm/yyyy" {...field} />
-                          </FormControl>
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Training To</FormLabel>
+                          <Popover open={isOpenTo} onOpenChange={setIsOpenTo}>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    `${format(field.value, "PPP")}`
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <CalendarDropdown
+                                mode="single"
+                                captionLayout="dropdown"
+                                selected={dateTo || field.value}
+                                onSelect={(selectedDate) => {
+
+                                  setDateTo(selectedDate!);
+                                  field.onChange(selectedDate);
+                                }}
+                                onDayClick={() => setIsOpen(false)}
+                                fromYear={2000}
+                                toYear={new Date().getFullYear()}
+
+                                defaultMonth={field.value}
+                              />
+                            </PopoverContent>
+                          </Popover>
+
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
+
                   </div>
                 </div>
               </div>

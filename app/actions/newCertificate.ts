@@ -22,11 +22,9 @@ export async function NewCertificateAction(form: CertificateSchemaType) {
         },
     });
 
-    
     if (!account) {
         return { error: "Account not found" };
     }
-    
 
     const {
         training_title,
@@ -40,13 +38,18 @@ export async function NewCertificateAction(form: CertificateSchemaType) {
         training_international,
     } = parsedBody.data;
 
+    // Fix timezone issues by ensuring dates are handled correctly
+    const adjustedTrainingFrom = new Date(training_from);
+    const adjustedTrainingTo = new Date(training_to);
+
     try {
         await db.certificates.create({
             data: {
                 training_title,
                 training_year,
-                training_from,
-                training_to,
+                // Use toISOString() to preserve the exact date
+                training_from: adjustedTrainingFrom.toISOString(),
+                training_to: adjustedTrainingTo.toISOString(),
                 training_number_of_hours,
                 training_sponsored_by,
                 training_name_of_provider,
