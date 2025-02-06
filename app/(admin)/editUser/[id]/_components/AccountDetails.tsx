@@ -70,6 +70,12 @@ const AccountDetails = ({ affiliationOfUser }: { affiliationOfUser: string | und
         }
     }, [AccountDetail.data, accountForm.reset])
 
+    if(AccountDetail.isLoading){
+        return (
+            <div>Loading...</div>
+        )
+    }
+
     return (
         <Card>
             <CardHeader>

@@ -95,6 +95,7 @@ export const schools = [
     { id: 45, value: "MALABON CITY TECH VOC AND ENTREPRENEURSHIP SHS" },
     { id: 46, value: "MALABON NATL HIGH SCHOOL SHS" },
     { id: 47, value: "NINOY AQUINO SENIOR HIGH SCHOOL" },
+    {id: 48, value: "SAMPLE SCHOOL"}
 ];
 
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -38,6 +38,9 @@ import Link from "next/link"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectValue } from "@/components/ui/select"
 import { SelectLabel, SelectTrigger } from "@radix-ui/react-select"
+import { DataTableFacetedFilter } from "@/components/ui/react-table/data-table-faceted-filter"
+import { schools } from "@/lib/school-choices"
+import Filter from "@/components/ui/react-table/Filter"
 
 
 interface User {
@@ -57,6 +60,7 @@ interface ActionCellProps {
 
 export type Office = {
   id: string;
+  school_assigned: string | null;
   account: {
     fullname: string;
     first_name: string;
@@ -73,6 +77,7 @@ export type Office = {
 
 
 export const ActionCell = ({ row }: ActionCellProps) => {
+
   const id = row.original.id;
   const [suspendReason, setSuspendReason] = useState('suspend');
   const suspendUser = suspendDivisionUser(id);
@@ -82,13 +87,11 @@ export const ActionCell = ({ row }: ActionCellProps) => {
     setSuspendReason(value);
   };
 
+
   const onSubmit = () => {
     suspendUser.mutate(suspendReason);
     setIsOpen(false);
   };
-
-
-
 
   return (
     <>
@@ -154,89 +157,85 @@ export const ActionCell = ({ row }: ActionCellProps) => {
   );
 };
 
-export const columns: ColumnDef<Office>[] = [
-  {
-    accessorKey: 'fullname',
-    header: 'Full Name',
-    cell: ({ row }) => {
-      const fullName = row.original?.account.first_name + " " + row.original?.account.middle_name + " " + row.original?.account.last_name || ""
-      return (
-        <div className="capitalize">{fullName}</div>
-      )
-    }
-  },
-  {
-    accessorKey: 'sex',
-    header: 'Sex',
-    cell: ({ row }) => {
-      return (
-        <div className="capitalize">{row.original.account.sex}</div>
+// export const columns: ColumnDef<Office>[] = [
+//   {
+//     accessorKey: 'fullname',
+//     header: 'Full Name',
+//     cell: ({ row }) => {
+//       const fullName = row.original?.account.first_name + " " + row.original?.account.middle_name + " " + row.original?.account.last_name || ""
+//       return (
+//         <div className="capitalize">{fullName}</div>
+//       )
+//     }
+//   },
+//   {
+//     accessorKey: 'sex',
+//     header: 'Sex',
+//     cell: ({ row }) => {
+//       return (
+//         <div className="capitalize">{row.original.account.sex}</div>
 
-      )
-    }
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: 'position',
-    header: 'Position',
-    cell: ({ row }) => {
-      return (
-        <div className="capitalize">{row.original.account.position}</div>
+//       )
+//     }
+//   },
+//   {
+//     accessorKey: "email",
+//     header: ({ column }) => {
+//       return (
+//         <Button
+//           variant="ghost"
+//           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+//         >
+//           Email
+//           <ArrowUpDown />
+//         </Button>
+//       )
+//     },
+//     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+//   },
+//   {
+//     accessorKey: 'position',
+//     header: 'Position',
+//     cell: ({ row }) => {
+//       return (
+//         <div className="capitalize">{row.original.account.position}</div>
 
-      )
-    }
-  },
-  {
-    accessorKey: 'classification',
-    header: 'Classification',
-    cell: ({ row }) => {
-      return (
-        <div className="capitalize">{row.original.account.classification}</div>
+//       )
+//     }
+//   },
+//   {
+//     accessorKey: 'classification',
+//     header: 'Classification',
+//     cell: ({ row }) => {
+//       return (
+//         <div className="capitalize">{row.original.account.classification}</div>
 
-      )
-    }
-  },
-  {
-    accessorKey: 'years_in_service',
-    header: 'Years in Service',
-    cell: ({ row }) => {
-      return (
-        <div className="capitalize">{row.original.account.years_in_service}</div>
+//       )
+//     }
+//   },
+//   {
+//     accessorKey: 'years_in_service',
+//     header: 'Years in Service',
+//     cell: ({ row }) => {
+//       return (
+//         <div className="capitalize">{row.original.account.years_in_service}</div>
 
-      )
-    }
-  },
-  {
-    accessorKey: 'school',
-    header: 'School',
-    cell: ({ row }) => {
-      return (
-        <div className="capitalize">{row.original.account.school}</div>
-
-      )
-    }
-  },
-
-  {
-      id: "actions",
-      enableHiding: false,
-      cell: ActionCell  // Now we're using a proper component
-  }
-]
+//       )
+//     }
+//   },
+//   {
+//     accessorKey: 'school',
+//     header: 'School',
+//     cell: ({ row }) => (
+//       <div className="capitalize">{row.original.school_assigned}</div>
+//     ),
+//   },
+//   {
+//     id: "actions",
+//     enableHiding: false,
+//     cell: ActionCell  // Now we're using a proper component
+//   }
+// ]
 
 
 export function SchoolTable() {
@@ -247,13 +246,102 @@ export function SchoolTable() {
   const [columnVisibility, setColumnVisibility] =
     useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
-
-
-
   const schoolData = getSchoolTable()
 
+
+
+  // Define columns with proper typing
+  const columns: ColumnDef<Office>[] = [
+    {
+      accessorKey: 'fullname',
+      header: 'Full Name',
+      cell: ({ row }) => {
+        const fullName = row.original?.account.first_name + " " + row.original?.account.middle_name + " " + row.original?.account.last_name || ""
+        return (
+          <div className="capitalize">{fullName}</div>
+        )
+      }
+    },
+    {
+      accessorKey: 'sex',
+      header: 'Sex',
+      cell: ({ row }) => {
+        return (
+          <div className="capitalize">{row.original.account.sex}</div>
+
+        )
+      }
+    },
+    {
+      accessorKey: "email",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Email
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    },
+    {
+      accessorKey: 'position',
+      header: 'Position',
+      cell: ({ row }) => {
+        return (
+          <div className="capitalize">{row.original.account.position}</div>
+
+        )
+      }
+    },
+    {
+      accessorKey: 'classification',
+      header: 'Classification',
+      cell: ({ row }) => {
+        return (
+          <div className="capitalize">{row.original.account.classification}</div>
+
+        )
+      }
+    },
+    {
+      accessorKey: 'years_in_service',
+      header: 'Years in Service',
+      cell: ({ row }) => {
+        return (
+          <div className="capitalize">{row.original.account.years_in_service}</div>
+
+        )
+      }
+    },
+    {
+      id: "school",
+      accessorFn: (row) => row.account.school,
+      header: "School",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.original.account.school}</div>
+      ),
+      meta: {
+        filterVariant: "select" as const // Use const assertion to narrow the type
+      }
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ActionCell  // Now we're using a proper component
+    }
+  ]
+
+  const handleClearFilter = () => {
+    table.getColumn("school")?.setFilterValue(undefined); // or ""
+  };
+
+
   const table = useReactTable({
-    data: schoolData.data || [],
+    data: schoolData.data ?? [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -263,6 +351,7 @@ export function SchoolTable() {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    filterFns: {},
     state: {
       sorting,
       columnFilters,
@@ -278,14 +367,42 @@ export function SchoolTable() {
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+
+        <div className="flex w-full  flex-row gap-2">
+          <Input
+            placeholder="Filter emails..."
+            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("email")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+
+          <Select
+            value={(table.getColumn("school")?.getFilterValue() as string) || ""}
+            onValueChange={(event) => table.getColumn("school")?.setFilterValue(event)}
+          >
+            <SelectTrigger className="w-1/3 border-2">
+              <SelectValue placeholder="Select school" />
+            </SelectTrigger>
+            <SelectContent>
+              {schools.map((school) => (
+                <SelectItem key={school.value} value={school.value}>
+                  {school.value}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Button onClick={handleClearFilter} disabled={!table.getColumn("school")?.getFilterValue()}> {/* Clear button */}
+            Clear Filter
+          </Button>
+
+
+        </div>
+
+
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -320,13 +437,20 @@ export function SchoolTable() {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    <TableHead
+                      className="bg-secondary p-1"
+                      key={header.id}
+
+                    >
+                      <div>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </div>
+
                     </TableHead>
                   )
                 })}

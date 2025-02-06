@@ -34,6 +34,15 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             return NextResponse.json({message: "User is not authenticated"}, {status: 404})
         }
 
+        const updateUser = await db.user.update({
+            where: {
+                id: params.id
+            },
+            data: {
+                school_assigned: school
+            }
+        })
+
         const updateAccount = await db.account.update({
             where: {
                 accountId: params.id
@@ -57,6 +66,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                 school
             }
         })
+
+       
 
         revalidatePath('/')
         return NextResponse.json(updateAccount, {status: 200})

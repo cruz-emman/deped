@@ -62,7 +62,6 @@ export type AccountSchemaType = z.infer<typeof AccountSchema>
 
 
 export const CreateRoleAccountSchema = z.object({
-    name: z.string().optional(),
     password: z.string()
         .min(8, { message: "Password must be at least 8 charact       ers" }) // Recommended minimum password length
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
@@ -81,6 +80,7 @@ export const CreateRoleAccountSchema = z.object({
     first_name: z.string().optional(),
     middle_name: z.string().optional(),
     last_name: z.string().optional(),
+    school_assigned: z.string().optional(),
 })
 
 export type CreateRoleAccountSchemaType = z.infer<typeof CreateRoleAccountSchema>

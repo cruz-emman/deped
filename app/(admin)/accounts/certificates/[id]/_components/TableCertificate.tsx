@@ -83,38 +83,20 @@ function AccountsCertificateTable({ from, to }: Props) {
         enableColumnFilter: true,
       },
       {
-        accessorKey: 'training_from',
+        accessorKey: 'training_from',  // Correct: Matches the property name
         header: 'From',
-        cell: ({ row }) => format(parseISO(row.original.training_from), 'MMM dd, yyyy'), // Parse and format in cell
         enableColumnFilter: true,
-        filterFn: (row, columnId, filterValue) => {
-          if (!filterValue) return true; // Show all rows if filter is empty
-
-          const rowDate = parseISO(row.original.training_from);
-          const filterDate = parseISO(filterValue);
-
-          return rowDate >= filterDate; // Example: filter for dates greater than or equal to the input
-        },
       },
       {
-        accessorKey: 'training_to',
+        accessorKey: 'training_to',  // Correct: Matches the property name
         header: 'End',
-        cell: ({ row }) => format(parseISO(row.original.training_to), 'MMM dd, yyyy'), // Parse and format
         enableColumnFilter: true,
-        filterFn: (row, columnId, filterValue) => {
-          if (!filterValue) return true; // Show all rows if filter is empty
-
-          const rowDate = parseISO(row.original.training_to);
-          const filterDate = parseISO(filterValue);
-
-          return rowDate <= filterDate; // Example: filter for dates less than or equal to the input
-        },
       },
-
       {
         accessorKey: 'training_number_of_hours', // Correct: Matches the property name
         header: 'No. of Hours',
         enableColumnFilter: true,
+        cell: ({row}) => row.original.training_number_of_hours.split('hours')[0]
       },
       {
         accessorKey: 'training_sponsored_by',  // Correct: Matches the property name

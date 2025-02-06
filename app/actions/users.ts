@@ -7,19 +7,20 @@ import { Affiliation, Role, Status } from "@prisma/client";
 
 type UserCreationResult = {
     id: string;
-    name: string | null;
     email: string;
     emailVerified: Date | null;
     image: string | null;
     role: Role;
     affiliation: Affiliation;
+    school_assigned: string;
     status: Status;
     createdAt: Date;
     updatedAt: Date;
-  } | null;
+} | null;
 
 export async function creatUser(data: CreateRoleAccountSchemaType) {
     try {
+
         // Check if the user already exists based on their email
         const existingUser = await db.user.findUnique({
             where: {
@@ -39,24 +40,30 @@ export async function creatUser(data: CreateRoleAccountSchemaType) {
         // Create the user if not existing
         const user = await db.user.create({
             data: {
-                name: data.name,
                 email: data.email,
                 password: hashedPassword,
                 role: data.role,
                 affiliation: data.affiliation,
+                school_assigned: data.school_assigned
             },
         });
 
+        console.log({
+            raw_data: data.school_assigned,
+            from_prisma: user.school_assigned
+        })
+
         await db.account.create({
             data: {
-              email: user.email,
-              accountId: user.id,
-              first_name: data?.first_name,
-              middle_name: data?.middle_name,
-              last_name: data?.last_name,
+                email: user.email,
+                accountId: user.id,
+                first_name: data?.first_name,
+                middle_name: data?.middle_name,
+                last_name: data?.last_name,
+                school: user.school_assigned,
 
             }
-          })
+        })
 
         revalidatePath('/');
         return user;

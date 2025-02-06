@@ -20,6 +20,7 @@ import { toast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { useCurrentRole } from '@/hooks/user-role'
+import { schools } from '@/lib/school-choices'
 
 const NewUser = () => {
     const router = useRouter()
@@ -27,14 +28,14 @@ const NewUser = () => {
     const form = useForm<CreateRoleAccountSchemaType>({
         resolver: zodResolver(CreateRoleAccountSchema),
         defaultValues: {
-            name: '',
             email: '',
             password: '',
-            role: undefined, 
+            role: undefined,
             affiliation: undefined,
             first_name: '',
             middle_name: '',
-            last_name: ''
+            last_name: '',
+            school_assigned: ''
         }
     })
 
@@ -71,6 +72,8 @@ const NewUser = () => {
     const onSubmit = useCallback((values: CreateRoleAccountSchemaType) => {
         mutate(values)
     }, [mutate])
+
+    console.log(form.watch('role'))
     return (
         <Card className='mt-2'>
             <CardHeader>
@@ -89,19 +92,7 @@ const NewUser = () => {
                             <div className='w-full gap-4 grid grid-cols-1 md:grid-cols-2'>
                                 {/* Name(username), Email, Password, Role */}
                                 <div className=''>
-                                <FormField
-                                        control={form.control}
-                                        name="name"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Username*</FormLabel>
-                                                <FormControl>
-                                                    <Input type="text" placeholder="Username" {...field} />
-                                                </FormControl>
 
-                                            </FormItem>
-                                        )}
-                                    />
                                     <FormField
                                         control={form.control}
                                         name="first_name"
@@ -191,20 +182,21 @@ const NewUser = () => {
                                                         {role === 'division_office_admin' && (
                                                             <>
                                                                 <SelectItem value="division_office">Division Office</SelectItem>
+                                                                <SelectItem value="school_admin">School Admin</SelectItem>
+                                                                <SelectItem value="teacher">Teacher</SelectItem>
+
                                                             </>
                                                         )}
 
-                                                        {role === 'school_admin' && (
-                                                            <SelectItem value="teacher">Teacher</SelectItem>
-
-                                                        )}
-
+                                                    
 
                                                     </SelectContent>
                                                 </Select>
                                             </FormItem>
                                         )}
                                     />
+
+                                    
 
                                     <FormField
                                         control={form.control}
@@ -232,16 +224,35 @@ const NewUser = () => {
                                                         {role === 'school_admin' && (
                                                             <SelectItem value="school">School</SelectItem>
                                                         )}
-
-                                                        
                                                     </SelectContent>
                                                 </Select>
                                             </FormItem>
                                         )}
                                     />
 
-
-
+                                    {form.watch('affiliation') === 'school' && form.watch('role') === 'school_admin'  && (
+                                        <FormField
+                                            control={form.control}
+                                            name="school_assigned"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>School Assigned*</FormLabel>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Select a school" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            {schools.map((school) => (
+                                                                <SelectItem key={school.value} value={school.value}>{school.value}</SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )}
                                 </div>
                             </div>
 

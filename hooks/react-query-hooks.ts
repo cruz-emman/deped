@@ -93,7 +93,6 @@ export const updateCurrentCredential = (id: string | string[]) => {
 //UPDATE ACCOUNTS
 export const updateAccount = (id: string | string[]) => {
     const queryClient = useQueryClient()
-    const router = useRouter()
     return useMutation({
         mutationKey: ['updateAccounts', id],
         mutationFn: async (values: UpdateAccountSchemaType) => {

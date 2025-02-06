@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import {  ChevronDown, DeleteIcon, Edit2, MoreHorizontal } from "lucide-react"
+import { ChevronDown, DeleteIcon, Edit2, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -36,6 +36,7 @@ import {
 import Link from "next/link"
 import { format } from "date-fns"
 import { deleteCertificate, getCertificateTable } from "@/hooks/react-query-hooks"
+import Filter from "@/components/ui/react-table/Filter"
 
 
 
@@ -57,149 +58,7 @@ export type CertificateTableType = {
   training_certificate_path: string
 }
 
-export const columns: ColumnDef<CertificateTableType>[] = [
-  {
-    accessorKey: 'training_title',
-    header: 'Training Title',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_title}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'Year',
-    header: 'Year',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_year}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'From',
-    header: 'From',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {format(new Date(row.original.training_from), 'MMMM dd, yyyy')}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'End',
-    header: 'End',
-    cell: ({ row }) => {
-      return (
-        <div>
-           {format(new Date(row.original.training_to as string), 'MMMM dd, yyyy')}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'No of Hours',
-    header: 'No. of Hours',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_number_of_hours}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'Conducted / Sponsors',
-    header: 'Conducted / Sponsors',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_sponsored_by}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'Service Provider',
-    header: 'Service Provider',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_name_of_provider}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'Category',
-    header: 'Category',
-    cell: ({ row }) => {
-      
-      return (
-        <div>
-          {row.original.training_category.split('_')[0]}
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: 'International / Local',
-    header: 'International / Local',
-    cell: ({ row }) => {
-      return (
-        <div>
-          {row.original.training_international}
-        </div>
-      )
-    }
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
 
-
-      const id = row.original.id
-
-      const deleteCertificateMutation = deleteCertificate();
-
-      const handleDelete = (id: string) => {
-        deleteCertificateMutation.mutate(id);
-      };
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <Edit2 className="h-4 w-4 text-blue-400/90" />
-              <Link href={`/certificates/updateCertificate/${id}`}>
-                Edit
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleDelete(id)}
-            >
-              <DeleteIcon className="h-4 w-4 text-red-400/90" />  Delete
-            </DropdownMenuItem>
-
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
 
 export function CertificateTable({ id }: { id: string | string[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -211,6 +70,64 @@ export function CertificateTable({ id }: { id: string | string[] }) {
   const [rowSelection, setRowSelection] = React.useState({})
 
   const certificateTable = getCertificateTable(id)
+
+
+  const columns = React.useMemo(
+    () => [
+      {
+        accessorKey: 'training_title', // Correct: Matches the property name
+        header: 'Training Title',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_year',  // Correct: Matches the property name
+        header: 'Year',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_from',  // Correct: Matches the property name
+        header: 'From',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_to',  // Correct: Matches the property name
+        header: 'End',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_number_of_hours', // Correct: Matches the property name
+        header: 'No. of Hours',
+        enableColumnFilter: true,
+        cell: ({ row }) => row.original.training_number_of_hours.split('hours')[0]
+      },
+      {
+        accessorKey: 'training_sponsored_by',  // Correct: Matches the property name
+        header: 'Conducted / Sponsors',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_name_of_provider', // Correct: Matches the property name
+        header: 'Service Provider',
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_category',  // Correct: Matches the property name
+        header: 'Category',
+        cell: ({ row }) => row.original.training_category?.split('_')[0], // Safe split
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: 'training_international', // Correct: Matches the property name
+        header: 'International / Local',
+        enableColumnFilter: true,
+      },
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => { /* ... your actions code ... */ },
+      },
+    ], []
+  );
 
 
 
@@ -249,15 +166,8 @@ export function CertificateTable({ id }: { id: string | string[] }) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter title..."
-          value={(table.getColumn("training_title")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("training_title")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+      <div className="flex items-center">
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -292,13 +202,27 @@ export function CertificateTable({ id }: { id: string | string[] }) {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    <TableHead
+                      className="bg-secondary p-1"
+                      key={header.id}
+
+                    >
+                      <div>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </div>
+                      {header.column.getCanFilter() ? (
+                        <div className="grid place-content-center">
+                          <Filter
+                            column={header.column}
+
+                          />
+                        </div>
+                      ) : null}
                     </TableHead>
                   )
                 })}
@@ -360,7 +284,6 @@ export function CertificateTable({ id }: { id: string | string[] }) {
         </div>
       </div>
     </div>
-
 
   )
 }

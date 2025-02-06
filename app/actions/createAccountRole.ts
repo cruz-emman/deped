@@ -26,7 +26,7 @@ export async function CreateAccountActionRole(form: CreateRoleAccountSchemaType)
     }
   }
 
-  const { name, password, email, role, affiliation, first_name, middle_name, last_name } = parsedBody.data
+  const {password, email, role, affiliation, first_name, middle_name, last_name, school_assigned } = parsedBody.data
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -42,11 +42,12 @@ export async function CreateAccountActionRole(form: CreateRoleAccountSchemaType)
 
     const newUser = await db.user.create({
       data: {
-        name,
+     
         password: hashedPassword,
         email,
         role,
         affiliation,
+        school_assigned
       }
     })
 
@@ -56,7 +57,8 @@ export async function CreateAccountActionRole(form: CreateRoleAccountSchemaType)
         accountId: newUser.id,
         first_name: first_name,
         middle_name: middle_name,
-        last_name: last_name
+        last_name: last_name,
+        school: school_assigned
       }
     })
 

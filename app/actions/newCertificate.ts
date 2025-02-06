@@ -2,6 +2,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { CertificateSchema, CertificateSchemaType } from "@/lib/zod-schema";
+import {format} from 'date-fns'
 
 export async function NewCertificateAction(form: CertificateSchemaType) {
     const session = await auth();
@@ -39,8 +40,8 @@ export async function NewCertificateAction(form: CertificateSchemaType) {
     } = parsedBody.data;
 
     // Fix timezone issues by ensuring dates are handled correctly
-    const adjustedTrainingFrom = new Date(training_from);
-    const adjustedTrainingTo = new Date(training_to);
+    const adjustedTrainingFrom = format(new Date(training_from), 'MMM dd, yyyy');
+    const adjustedTrainingTo = format(new Date(training_to), 'MMM dd, yyyy');
 
     try {
         await db.certificates.create({
@@ -48,8 +49,8 @@ export async function NewCertificateAction(form: CertificateSchemaType) {
                 training_title,
                 training_year,
                 // Use toISOString() to preserve the exact date
-                training_from: adjustedTrainingFrom.toISOString(),
-                training_to: adjustedTrainingTo.toISOString(),
+                training_from: adjustedTrainingFrom,
+                training_to: adjustedTrainingTo,
                 training_number_of_hours,
                 training_sponsored_by,
                 training_name_of_provider,

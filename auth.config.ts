@@ -34,7 +34,6 @@ export default {
                         // Return only the fields that match the User interface
                         return {
                             id: existingUser.id,
-                            name: existingUser.name,
                             email: existingUser.email,
                             role: existingUser.role,
                             affiliation: existingUser.affiliation,

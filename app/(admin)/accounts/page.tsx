@@ -13,10 +13,11 @@ import * as XLSX from 'xlsx'
 import { createBulkUser } from '@/app/actions/users'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from '@/hooks/use-toast'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 
 
 interface ExcelRow {
-  name?: string;
   email?: string;
   password?: string;
   role?: string;
@@ -24,10 +25,11 @@ interface ExcelRow {
   first_name?: string;
   middle_name?: string;
   last_name?: string;
+  school_assigned?: string
+  
 }
 
 interface ProcessedRow {
-  name: string | null;
   email: string | null;
   password: string | null;
   role: string;
@@ -35,6 +37,8 @@ interface ProcessedRow {
   first_name: string | undefined;
   middle_name: string | undefined;
   last_name: string | undefined;
+  school_assigned?: string | undefined
+
 }
 
 
@@ -47,25 +51,25 @@ const Accounts = () => {
   const [file, setFile] = useState<File | null>(null)
 
 
-  
-const { mutate: importUsers, isPending } = useMutation({
-  mutationFn: async (jsonData: ProcessedRow[]) => {
-    //@ts-expect-error
-    await createBulkUser(jsonData);
-  },
-  onSuccess: () => {
-    toast({
-      title: 'Data imported successfully!'
-    }),
-    window.location.reload();
-  },
-  onError: (error) => {
-    console.error(error);
-    toast({
-      title: 'An error occurred while importing data.'
-    });
-  },
-});
+
+  const { mutate: importUsers, isPending } = useMutation({
+    mutationFn: async (jsonData: ProcessedRow[]) => {
+      //@ts-expect-error
+      await createBulkUser(jsonData);
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Data imported successfully!'
+      }),
+        window.location.reload();
+    },
+    onError: (error) => {
+      console.error(error);
+      toast({
+        title: 'An error occurred while importing data.'
+      });
+    },
+  });
 
   const handleFileUpload = () => {
     if (!file) {
@@ -85,7 +89,6 @@ const { mutate: importUsers, isPending } = useMutation({
 
         // Convert sheet to JSON and ensure plain objects
         const jsonData: ProcessedRow[] = (XLSX.utils.sheet_to_json(workSheet) as ExcelRow[]).map((row) => ({
-          name: row.name || null,
           email: row.email || null,
           password: row.password || null,
           role: row.role || 'teacher',
@@ -93,6 +96,7 @@ const { mutate: importUsers, isPending } = useMutation({
           first_name: row.first_name,
           middle_name: row.middle_name,
           last_name: row.last_name,
+          school_assigned: row.school_assigned
         }))
 
         // Call the server function
@@ -105,15 +109,20 @@ const { mutate: importUsers, isPending } = useMutation({
 
   return (
     <div className='px-16 space-y-10 '>
-      <Button asChild>
-        <Link href={'/newUserByAdmin'}>
-          Add new user
-        </Link>
-      </Button>
+
+      {role !== 'school_admin' && role !== 'teacher' && (
+        <Button asChild>
+          <Link href={'/newUserByAdmin'}>
+            Add new user
+          </Link>
+        </Button>
+      )}
 
       {role === 'division_office_admin' && (
 
         <>
+
+
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label htmlFor="picture">Import Excel</Label>
             <Input
@@ -137,8 +146,20 @@ const { mutate: importUsers, isPending } = useMutation({
         </Button> */}
 
       {affiliation === 'division_office' && (
-        <DivisionTable />
+        <Tabs defaultValue="division_office" className="w-full">
+          <TabsList>
+            <TabsTrigger value="division_office">Division Office</TabsTrigger>
+            <TabsTrigger value="school">School</TabsTrigger>
+          </TabsList>
+          <TabsContent value="division_office">
+            <DivisionTable />
+          </TabsContent>
+          <TabsContent value="school"><SchoolTable /></TabsContent>
+        </Tabs>
+
       )}
+
+
 
       {affiliation === 'school' && (
         <SchoolTable />

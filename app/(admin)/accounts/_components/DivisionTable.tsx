@@ -38,6 +38,7 @@ import Link from "next/link"
 import { getDivisionTable, suspendDivisionUser } from "@/hooks/react-query-hooks"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DataTableFacetedFilter } from '@/components/ui/react-table/data-table-faceted-filter';
 
 
 interface User {
@@ -381,6 +382,8 @@ export function DivisionTable() {
           }
           className="max-w-sm"
         />
+
+
         <Button
           variant="outline"
           className="ml-2"

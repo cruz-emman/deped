@@ -9,13 +9,18 @@ export async function GET() {
           role: 'teacher',
           NOT: {
             account: null
-          }
+          },
         }
       },
-      include: {
-        account: true,
-      },
-    })
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        affiliation: true,
+        school_assigned: true,  // explicitly selecting school_assigned
+        account: true,  // this will include all Account fields
+      }
+    });
     
     return Response.json(data);
   } catch (error) {
