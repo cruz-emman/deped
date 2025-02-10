@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -73,7 +73,22 @@ const NewUser = () => {
         mutate(values)
     }, [mutate])
 
-    console.log(form.watch('role'))
+    // const onSubmit = (values: CreateRoleAccountSchemaType) => {
+    //     console.log(values)
+    // }
+
+    useEffect(() => {
+        if (form.watch('role') !== 'school_admin') {
+            form.setValue('school_assigned', '')
+        }
+        if(form.watch('role') === 'division_office' || form.watch('role') === 'division_office_admin'){
+            form.setValue('affiliation', 'division_office')
+        }
+        if(form.watch('role') === 'school_admin' || form.watch('role') === 'teacher'){
+            form.setValue('affiliation', 'school')
+        }
+    }, [form.watch('role')])
+
     return (
         <Card className='mt-2'>
             <CardHeader>
@@ -173,64 +188,20 @@ const NewUser = () => {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        {role === 'super_admin' && (
-                                                            <>
-                                                                <SelectItem value="division_office_admin">Division Office Admin</SelectItem>
-                                                                <SelectItem value="school_admin">School Admin</SelectItem>
-                                                            </>
-                                                        )}
-                                                        {role === 'division_office_admin' && (
-                                                            <>
-                                                                <SelectItem value="division_office">Division Office</SelectItem>
-                                                                <SelectItem value="school_admin">School Admin</SelectItem>
-                                                                <SelectItem value="teacher">Teacher</SelectItem>
 
-                                                            </>
-                                                        )}
-
-                                                    
-
+                                                        <SelectItem value="division_office_admin">Division Office Admin</SelectItem>
+                                                        <SelectItem value="division_office">Division Office</SelectItem>
+                                                        <SelectItem value="school_admin">School Admin</SelectItem>
+                                                        <SelectItem value="teacher">Teacher</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </FormItem>
                                         )}
                                     />
 
-                                    
 
-                                    <FormField
-                                        control={form.control}
-                                        name="affiliation"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Affiliation*</FormLabel>
-                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select a role" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {form.watch('role') === 'division_office_admin' && (
-                                                            <SelectItem value="division_office">Division Office Admin</SelectItem>
-                                                        )}
-                                                        {form.watch('role') === 'school_admin' && (
-                                                            <SelectItem value="school">School</SelectItem>
-                                                        )}
-
-                                                        {role === 'division_office_admin' && (
-                                                            <SelectItem value="division_office">Divison Office</SelectItem>
-                                                        )}
-                                                        {role === 'school_admin' && (
-                                                            <SelectItem value="school">School</SelectItem>
-                                                        )}
-                                                    </SelectContent>
-                                                </Select>
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    {form.watch('affiliation') === 'school' && form.watch('role') === 'school_admin'  && (
+                                  
+                                    {form.watch('role') !== 'division_office' && form.watch('role') !== 'division_office_admin' && (
                                         <FormField
                                             control={form.control}
                                             name="school_assigned"

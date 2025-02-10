@@ -5,8 +5,7 @@ export async function GET() {
     const data = await db.user.findMany({
       where: {
         AND: {
-          affiliation: 'school',
-          role: 'teacher',
+          affiliation: 'school' ,
           NOT: {
             account: null
           },

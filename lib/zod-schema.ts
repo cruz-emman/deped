@@ -61,7 +61,51 @@ export type AccountSchemaType = z.infer<typeof AccountSchema>
 
 
 
-export const CreateRoleAccountSchema = z.object({
+export const CreateRoleAccountSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters" })
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {
+        message: "Password must include uppercase, lowercase, number, and special character",
+      }),
+    email: z.string().email({ message: "Invalid email format" }),
+    role: z.enum([
+      "super_admin",
+      "division_office_admin",
+      "division_office",
+      "school_admin",
+      "teacher",
+    ]),
+    affiliation: z.enum(["division_office", "school"], {
+      errorMap: () => ({ message: "Select a valid Affiliation" }),
+    }),
+    first_name: z.string(),
+    middle_name: z.string(),
+    last_name: z.string(),
+    school_assigned: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const { role, school_assigned } = data;
+    const exemptedRoles = ["division_office", "division_office_admin", "super_admin"];
+
+    // Check if school_assigned is missing or too short when required
+    if (
+      !exemptedRoles.includes(role) &&
+      (!school_assigned || school_assigned.length < 8)
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: "School assigned is required for school_admin and teacher and must be at least 8 characters.",
+        path: ["school_assigned"],
+      });
+    }
+  });
+export type CreateRoleAccountSchemaType = z.infer<typeof CreateRoleAccountSchema>
+
+
+
+export const UploadExcelFileSchema = z.object({
     password: z.string()
         .min(8, { message: "Password must be at least 8 charact       ers" }) // Recommended minimum password length
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
@@ -83,7 +127,7 @@ export const CreateRoleAccountSchema = z.object({
     school_assigned: z.string().optional(),
 })
 
-export type CreateRoleAccountSchemaType = z.infer<typeof CreateRoleAccountSchema>
+export type UploadExcelFileSchemaType = z.infer<typeof UploadExcelFileSchema>
 
 
 

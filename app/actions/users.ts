@@ -1,6 +1,6 @@
 'use server';
 import { db } from "@/lib/db";
-import { CreateRoleAccountSchemaType } from "@/lib/zod-schema";
+import { CreateRoleAccountSchemaType, UploadExcelFileSchemaType } from "@/lib/zod-schema";
 import { revalidatePath } from "next/cache";
 import bcrypt from 'bcryptjs'
 import { Affiliation, Role, Status } from "@prisma/client";
@@ -18,7 +18,7 @@ type UserCreationResult = {
     updatedAt: Date;
 } | null;
 
-export async function creatUser(data: CreateRoleAccountSchemaType) {
+export async function creatUser(data: UploadExcelFileSchemaType) {
     try {
 
         // Check if the user already exists based on their email
@@ -72,7 +72,7 @@ export async function creatUser(data: CreateRoleAccountSchemaType) {
         throw new Error('Failed to create user.');
     }
 }
-export async function createBulkUser(users: CreateRoleAccountSchemaType[]) {
+export async function createBulkUser(users: UploadExcelFileSchemaType[]) {
     try {
         const createdUsers: UserCreationResult[] = [];
         for (const user of users) {
